@@ -22,18 +22,9 @@ public:
         //initialization constructor
     }
 
-
     Criminal(const Criminal& other) = default;  //copy constructor
 
-
-    Criminal& operator=(const Criminal& other) {
-        id = other.id;
-        name = other.name;
-        rank = other.rank;
-        intel = other.intel;
-        return *this;
-        //operator= copy Criminal
-    }
+    Criminal& operator=(const Criminal& other) = default;
 
     ~Criminal() = default; //destructor
 
@@ -76,9 +67,9 @@ public:
 
     void showIntel() const{
         std::cout<<"Intel report for "<<name<<":\n";
-        for(int i = 0; i < intel.size(); ++i)
+        for(unsigned long long i = 0; i < intel.size(); ++i)
         {
-            std::cout<<intel[i]<<"\n";
+            std::cout<<i<<"\n";
         }
     }
 
@@ -257,7 +248,7 @@ public:
         if(isCritical())
             status+="ALERT! Critical condition!\n";
         else if (integrity<70)
-            status +="Moderate consition\n";
+            status +="Moderate condition\n";
         else
             status +="Suit is in good condition\n";
         return status;
