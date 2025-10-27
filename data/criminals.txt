@@ -1,0 +1,26 @@
+1
+Joker
+10
+4
+Expert chemist specializing in toxic gases and explosives.
+Psychological warfare strategist, unpredictable behavior.
+Connection to underground clown-themed gang.
+Known to set elaborate traps for Batman.
+
+2
+Black Mask
+8
+4
+Controls major sections of Gotham’s organized crime.
+Known for brutal enforcement and torture methods.
+Operates out of Janus Cosmetics ruins.
+Maintains influence over corrupt politicians and GCPD officers.
+
+3
+Penguin
+6
+4
+Owner of the Iceberg Lounge, fronts as a businessman.
+Arms dealer with widespread black market connections.
+Employs elite mercenaries and intelligence brokers.
+Obsessive collector of rare birds, uses them as coded messages.
