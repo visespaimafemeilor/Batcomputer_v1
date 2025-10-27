@@ -18,7 +18,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install g++ -y
 
       - name: Build Bat-Computer
-        run: g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o batcomputer
+        run: g++ -std=c++20 -Wall -Wextra -O2 main.cpp -o batcomputer
 
       - name: Run executable
         run: ./batcomputer
