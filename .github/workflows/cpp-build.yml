@@ -1,0 +1,24 @@
+name: C++ Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install g++
+        run: sudo apt-get update && sudo apt-get install g++ -y
+
+      - name: Build Bat-Computer
+        run: g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o batcomputer
+
+      - name: Run executable
+        run: ./batcomputer
