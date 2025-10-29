@@ -4,6 +4,8 @@
 #include <vector>
 #include <fstream>
 #include <limits>
+#include <sstream>
+#include <random>
 
 class Criminal{
 private:
@@ -77,11 +79,23 @@ public:
         rank += inc;
     }
 
-    [[nodiscard]] std::vector<Criminal> scanCrimeIntel(const std::string& keyword = "", int minThreat=1) const{
-        std::vector<Criminal> result;
-        for (const auto& c : name){
+    [[nodiscard]]double calculateThreatLevel() const{
+        double score = rank * 10.0;
+        score+= static_cast<double>(intel.size()) * 3.5; //fiecare informatie despre criminal adauga un risc
+        if (rank>8 && intel.size()>5)
+            score*=1.2; //da boost la scor daca e criminal mare cu multe informatii despre el
+        return score;
+    }
 
-        }
+    [[nodiscard]]bool simulateEscape(double facilitySecurityLevel) const{
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        std::uniform_real_distribution<> distrib(0.0, 100.0);
+        const double baseChance = rank * 2.0;
+        const double escapeChance = baseChance/facilitySecurityLevel*100.0;
+        const double randomValue = distrib(gen);
+        std::cout << name << " escape chance: " << escapeChance <<  "% |Roll: " <<randomValue <<"\n";
+        return randomValue < escapeChance;
     }
 
 };
@@ -180,6 +194,33 @@ public:
         return report;
     }
 
+    [[nodiscard]] std::string simulateBattle(const Criminal& enemy) const{
+        int myPower=physical_power;
+        int enemyPower=enemy.getRank()*10;
+        int round = 0;
+        std::ostringstream report;
+
+        report << "Battle: " <<codename << " VS "<<enemy.getName()<<"\n";
+
+        static std::random_device rd; //am folosit asta ca imi dadea warning ca foloseam rand()
+        static std::mt19937 gen(rd());
+        while (myPower>0 && enemyPower>0){
+            round++;
+
+            std::uniform_int_distribution<> myHitDistrib(5, 20);
+            std::uniform_int_distribution<> enemyHitDistrib(3, 15);
+
+            int myHit = myHitDistrib(gen);
+            int enemyHit = enemyHitDistrib(gen);
+            enemyPower -= myHit;
+            myPower -= enemyHit;
+            report << "Round "<<round<<": "<<codename<<" hits "<<myHit<<" | "<<enemy.getName()<<" hits "<<enemyHit<<"\n";
+        }
+        report<<"Winner: "<<(myPower>0 ? codename : enemy.getName())<<"\n";
+        return report.str();
+
+    }
+
 };
 
 class Batsuit{
@@ -203,21 +244,11 @@ public:
 //        std::cout<< "Contructor initialization for Batsuit\n";
     }
 
-    Batsuit(const Batsuit& other) : level{other.level}, part{other.part}, integrity {other.integrity}{
-//        std::cout << "Copy constructor for Batsuit\n";
-    }
+    Batsuit(const Batsuit& other) = default;
 
-    Batsuit& operator=(const Batsuit& other) {
-        level = other.level;
-        part = other.part;
-        integrity = other.integrity;
-//        std::cout << "operator= copiere Batsuit\n";
-        return *this;
-    }
+    Batsuit& operator= (const Batsuit& other) = default;
 
-    ~Batsuit(){
-//        std::cout << "Destructor Batsuit\n";
-    }
+    ~Batsuit() = default;
 
     friend std::ostream& operator<<(std::ostream& os, const Batsuit& bs)
     {
@@ -261,6 +292,13 @@ public:
         return status;
     }
 
+    void applyBattleDamage(int damageBad){
+        const double degradation=damageBad*(level/5.0);
+        integrity-=degradation;
+        if (integrity<0) integrity=0;
+        std::cout << "Batsuit took "<<degradation<<"% damage! Integrity now at "<<integrity<<"%\n";
+    }
+
 };
 
 int main(){
@@ -271,9 +309,9 @@ int main(){
     std::vector<Family> family;
     std::vector<Batsuit> suit;
 
-    std::ifstream file1("data/criminals.txt");
-    std::ifstream file2("data/family.txt");
-    std::ifstream file3("data/batsuit.txt");
+    std::ifstream file1("criminals.txt");
+    std::ifstream file2("family.txt");
+    std::ifstream file3("batsuit.txt");
 
     if(!file1 || !file2 || !file3){
         std::cerr << "One or more files could not be opened.\n";
