@@ -77,6 +77,13 @@ public:
         rank += inc;
     }
 
+    [[nodiscard]] std::vector<Criminal> scanCrimeIntel(const std::string& keyword = "", int minThreat=1) const{
+        std::vector<Criminal> result;
+        for (const auto& c : name){
+
+        }
+    }
+
 };
 
 class Family
@@ -264,9 +271,9 @@ int main(){
     std::vector<Family> family;
     std::vector<Batsuit> suit;
 
-    std::ifstream file1("C:/Projects/UB POO/Batcomputer_1/data/criminals.txt");
-    std::ifstream file2("C:/Projects/UB POO/Batcomputer_1/data/family.txt");
-    std::ifstream file3("C:/Projects/UB POO/Batcomputer_1/data/batsuit.txt");
+    std::ifstream file1("data/criminals.txt");
+    std::ifstream file2("data/family.txt");
+    std::ifstream file3("data/batsuit.txt");
 
     if(!file1 || !file2 || !file3){
         std::cerr << "One or more files could not be opened.\n";
