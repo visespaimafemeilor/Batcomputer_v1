@@ -1,4 +1,4 @@
-name: C++ Build
+name: C++ Build & Runtime Checks
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30   # pentru job-uri care ar putea dura mult
 
     steps:
       - name: Checkout repository
@@ -20,5 +21,21 @@ jobs:
       - name: Build Bat-Computer
         run: g++ -std=c++20 -Wall -Wextra -O2 main.cpp -o batcomputer
 
-      - name: Run executable
-        run: ./batcomputer
+      - name: Prepare input file
+        run: |
+          echo "test input" > input.txt
+          cat input.txt
+
+      - name: Run executable with timeout
+        run: |
+          echo "Running batcomputer..."
+          timeout 30s ./batcomputer < input.txt
+          echo "Finished or timed out."
+
+      - name: Runtime Checks
+        uses: ./.github/actions/runtime_checks
+        with:
+          INPUT_FILENAME: input.txt
+          EXECUTABLE_NAME: batcomputer
+        timeout-minutes: 20
+        continue-on-error: true  # workflow-ul nu se oprește dacă apare eroare
