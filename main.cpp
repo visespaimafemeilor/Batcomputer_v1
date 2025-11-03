@@ -356,9 +356,9 @@ int main(){
         std::cout << "\n==========================\n";
         std::cout << "        BAT-COMPUTER      \n";
         std::cout << "==========================\n";
-        std::cout << "1) Show Criminal Database\n";
-        std::cout << "2) Show Bat-Family Members\n";
-        std::cout << "3) Show Batsuit Loadout\n";
+        std::cout << "1) Show Criminal Database (using getters)\n";
+        std::cout << "2) Show Bat-Family Members (using getters)\n";
+        std::cout << "3) Show Batsuit Loadout (using getters)\n";
         std::cout << "4) Show criminal intel\n";
         std::cout << "5) Search Criminal by Name\n";
         std::cout << "6) Search Family Member by Codename\n";
@@ -375,22 +375,37 @@ int main(){
         {
             case 1:{
                 std::cout << "\n=== Criminal Database ===\n";
-                for(const auto& c : criminals)
-                    std::cout << c << "\n";
+                for(const auto& c : criminals){
+                    std::cout << "ID: " << c.getId() << "\n";
+                    std::cout << "Name: " << c.getName() << "\n";
+                    std::cout << "Rank: " << c.getRank() << "\n";
+                    std::cout << "Intel count: " << c.getIntel().size() << "\n";
+                    std::cout << "Threat Level: " << c.calculateThreatLevel() << "\n\n";
+                }
                 break;
             }
 
             case 2:{
                 std::cout << "\n=== Bat-Family Members ===\n";
-                for(const auto& m : family)
-                    std::cout << m << "\n";
+                for(const auto& f : family){
+                    std::cout << "Codename: " << f.getCodename() << "\n";
+                    std::cout << "Civilian Name: " << f.getCivilianName() << "\n";
+                    std::cout << "Physical Power: " << f.getPhysicalPower() << "\n";
+                    std::cout << "Skills: ";
+                    for(const auto& skill : f.getSkills())
+                        std::cout << skill << ", ";
+                    std::cout << "\n\n";
+                }
                 break;
             }
 
             case 3:{
                 std::cout << "\n=== Batsuit Loadout ===\n";
-                for(const auto& b : suit)
-                    std::cout << b << "\n";
+                for(const auto& b : suit){
+                    std::cout << "Part: " << b.getPart() << "\n";
+                    std::cout << "Level: " << b.getLevel() << "\n";
+                    std::cout << "Integrity: " << b.getIntegrity() << "\n\n";
+                }
                 break;
             }
 
@@ -399,16 +414,17 @@ int main(){
                 std::string name;
                 std::getline(std::cin, name);
                 bool found = false;
-                for (const auto& c : criminals)
-                {
-                    if (c.getName() == name)
-                    {
-                        c.showIntel();
+                for(const auto& c : criminals){
+                    if(c.getName() == name){
+                        const auto& intel = c.getIntel();
+                        std::cout << "Intel report for " << c.getName() << ":\n";
+                        for(size_t i = 0; i < intel.size(); ++i)
+                            std::cout << i+1 << ". " << intel[i] << "\n";
                         found = true;
                         break;
                     }
                 }
-                if (!found) std::cout <<"No criminal found with that name.\n";
+                if(!found) std::cout << "No criminal found with that name.\n";
                 break;
             }
 
@@ -419,7 +435,11 @@ int main(){
                 bool found = false;
                 for(const auto& c : criminals){
                     if(c.getName() == searchName){
-                        std::cout << "\nFOUND:\n" << c << "\n";
+                        std::cout << "FOUND:\n";
+                        std::cout << "ID: " << c.getId() << "\n";
+                        std::cout << "Name: " << c.getName() << "\n";
+                        std::cout << "Rank: " << c.getRank() << "\n";
+                        std::cout << "Threat Level: " << c.calculateThreatLevel() << "\n\n";
                         found = true;
                     }
                 }
@@ -432,9 +452,16 @@ int main(){
                 std::string code;
                 std::getline(std::cin, code);
                 bool found = false;
-                for(const auto& m : family){
-                    if(m.getCodename() == code){
-                        std::cout << "\nFOUND:\n" << m << "\n";
+                for(const auto& f : family){
+                    if(f.getCodename() == code){
+                        std::cout << "FOUND:\n";
+                        std::cout << "Codename: " << f.getCodename() << "\n";
+                        std::cout << "Civilian Name: " << f.getCivilianName() << "\n";
+                        std::cout << "Physical Power: " << f.getPhysicalPower() << "\n";
+                        std::cout << "Skills: ";
+                        for(const auto& skill : f.getSkills())
+                            std::cout << skill << ", ";
+                        std::cout << "\n\n";
                         found = true;
                     }
                 }
@@ -443,7 +470,7 @@ int main(){
             }
 
             case 7:{
-                std::cout <<"\nChoose family member(codename): ";
+                std::cout << "\nChoose family member (codename): ";
                 std::string codename;
                 std::getline(std::cin, codename);
                 std::cout << "Choose criminal: ";
@@ -452,28 +479,33 @@ int main(){
 
                 const Family* vigillante = nullptr;
                 const Criminal* enemy = nullptr;
-                for (const auto& f : family)
-                    if (f.getCodename() == codename) vigillante = &f;
-                for (const auto& c : criminals)
-                    if (c.getName() == cname) enemy = &c;
 
-                if (vigillante && enemy){
+                for(const auto& f : family)
+                    if(f.getCodename() == codename) vigillante = &f;
+                for(const auto& c : criminals)
+                    if(c.getName() == cname) enemy = &c;
+
+                if(vigillante && enemy){
+                    std::cout << vigillante->getCodename() << " (Power: "
+                              << vigillante->getPhysicalPower() << ") "
+                              << "VS " << enemy->getName() << " (Rank: "
+                              << enemy->getRank() << ")\n";
+
                     std::cout << vigillante->fightReport(*enemy);
-                    std::cout << "\n\n--- FULL BATTLE SIMULATION ---\n";
                     std::cout << vigillante->simulateBattle(*enemy);
                 }
                 else
-                    std::cout <<"Invalid names.\n";
+                    std::cout << "Invalid names.\n";
                 break;
             }
 
             case 8:{
-                std::cout<<"\nBatsuit Status Report\n";
-                for (auto& b : suit){
+                std::cout << "\nBatsuit Status Report\n";
+                for(auto& b : suit){
                     std::cout << b.statusReport() << "\n";
-                    // simulate hit
+                    // Simulăm o lovitură
                     b.applyBattleDamage(10);
-                    std::cout << "Updated: " << b.statusReport() << "\n";
+                    std::cout << "After damage: " << b.statusReport() << "\n";
                 }
                 break;
             }
@@ -485,10 +517,11 @@ int main(){
                 bool found = false;
                 for(auto& c : criminals){
                     if(c.getName() == name){
-                        found = true;
                         c.promote();
                         std::cout << "Criminal promoted!\n";
-                        std::cout << "Threat level: " << c.calculateThreatLevel() << "\n";
+                        std::cout << "New Rank: " << c.getRank() << "\n";
+                        std::cout << "Threat Level: " << c.calculateThreatLevel() << "\n";
+                        found = true;
                         break;
                     }
                 }
@@ -510,7 +543,7 @@ int main(){
                     if(c.getName() == name){
                         found = true;
                         bool escaped = c.simulateEscape(securityLevel);
-                        std::cout << (escaped ? "ESCAPED!" : "Contained.") << "\n";
+                        std::cout << (escaped ? "⚠️ ESCAPED!" : "✅ Contained.") << "\n";
                         break;
                     }
                 }
