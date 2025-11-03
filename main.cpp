@@ -66,7 +66,7 @@ public:
         }
         return true;
     }
-
+/*
     void showIntel() const{
         std::cout<<"Intel report for "<<name<<":\n";
         for(const auto & i : intel)
@@ -74,7 +74,7 @@ public:
             std::cout<<"--> "<<i<<"\n";
         }
     }
-
+*/
     void promote(int inc=1){
         rank += inc;
     }
