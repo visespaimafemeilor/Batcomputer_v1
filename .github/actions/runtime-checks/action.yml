@@ -1,51 +1,66 @@
-name: C++ Build & Runtime Checks + Valgrind
+name: 'Runtime checks'
+description: 'Run dynamic analysis tools'
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+runs:
+  using: "composite"
+  steps:
+    - name: Cache restore tools
+      uses: actions/cache/restore@v4.3.0
+      if: runner.os == 'Linux' && matrix.runs_msan == true
+      id: cache-tools
+      with:
+        path: tools
+        key: tools-clang-${{ matrix.clang_ver }}-stdlib-msan
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 40
+    - name: Setup memory sanitizer
+      shell: bash
+      if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p tools
+        cd tools
+        git clone --depth=1 --branch=llvmorg-${{ matrix.clang_ver_full }} https://github.com/llvm/llvm-project
+        cd llvm-project
+        sudo ln -s -f /usr/bin/$CC /usr/bin/clang
+        sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
+        # https://github.com/llvm/llvm-project/issues/78354
+        sudo sysctl vm.mmap_rnd_bits=28 || true
+        cmake -G Ninja -S runtimes -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_CXX_COMPILER=clang++ \
+          -DLLVM_USE_SANITIZER=MemoryWithOrigins \
+          -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
+        cmake --build build -j6 -- cxx cxxabi
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Cache save tools
+      uses: actions/cache/save@v4.3.0
+      if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
+      with:
+        path: tools
+        key: tools-clang-${{ matrix.clang_ver }}-stdlib-msan
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y g++ valgrind
+    - name: Sanitizers
+      shell: bash
+      if: (matrix.runs_asan == true || matrix.runs_msan == true) && runner.os != 'Windows'
+      run: |
+        # Creează input automat pentru a ieși imediat
+        echo "0" > "${INPUT_FILENAME}"
+        # Rulează executabilul cu timeout
+        timeout 15s cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        echo "Sanitizer run finished or timed out."
 
-      - name: Build Bat-Computer
-        run: g++ -std=c++20 -Wall -Wextra -O2 main.cpp -o batcomputer
+    - name: Sanitizers (Windows MSVC)
+      shell: bash
+      if: matrix.cxx == 'cl' && matrix.runs_asan == true
+      continue-on-error: true
+      run: |
+        echo "0" > "${INPUT_FILENAME}"
+        timeout 15s cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+        echo "Sanitizer run finished or timed out."
 
-      - name: Prepare input for non-interactive run
-        run: |
-          echo "0" > input.txt
-          cat input.txt
-
-      - name: Run executable with timeout
-        run: |
-          echo "Running batcomputer..."
-          timeout 15s ./batcomputer < input.txt
-          echo "Finished or timed out."
-
-      - name: Runtime Checks
-        uses: ./.github/actions/runtime_checks
-        with:
-          INPUT_FILENAME: input.txt
-          EXECUTABLE_NAME: batcomputer
-        timeout-minutes: 20
-        continue-on-error: true
-
-      - name: Run Valgrind
-        run: |
-          echo "Running Valgrind..."
-          echo "0" > temp_input.txt
-          timeout 15s valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
-            ./batcomputer < temp_input.txt
-          echo "Valgrind finished or timed out."
+    - name: Valgrind
+      shell: bash
+      if: runner.os == 'Linux' && matrix.runs_valgrind == true
+      run: |
+        bash ./scripts/run_valgrind.sh "${{ env.ZIP_NAME }}"
