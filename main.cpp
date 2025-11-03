@@ -410,23 +410,30 @@ int main(){
             }
 
             case 4:{
-                std::cout << "\nEnter criminal name for intel: ";
-                std::string name;
-                std::getline(std::cin, name);
-                bool found = false;
-                for(const auto& c : criminals){
-                    if(c.getName() == name){
-                        const auto& intel = c.getIntel();
-                        std::cout << "Intel report for " << c.getName() << ":\n";
-                        for(size_t i = 0; i < intel.size(); ++i)
-                            std::cout << i+1 << ". " << intel[i] << "\n";
-                        found = true;
-                        break;
+                    std::cout << "\nEnter criminal name for intel: ";
+                    std::string name;
+                    std::getline(std::cin, name);
+                    bool found = false;
+                    for(const auto& c : criminals){
+                        if(c.getName() == name){
+                            found = true;
+                            const auto& intel = c.getIntel();
+                            std::cout << "\nIntel report for " << c.getName() << ":\n";
+                            if(intel.empty()){
+                                std::cout << "No intel available.\n";
+                            } else {
+                                for(const auto & i : intel){
+                                    std::cout<<"--> "<< i<<"\n";
+                                }
+                            }
+                            break;
+                        }
                     }
-                }
-                if(!found) std::cout << "No criminal found with that name.\n";
-                break;
+                    if(!found)
+                        std::cout << "No criminal found with that name.\n";
+                    break;
             }
+
 
             case 5:{
                 std::cout << "\nEnter criminal name: ";
