@@ -324,7 +324,6 @@ public:
            const std::vector<Criminal>& enemies_)
         : alias(std::move(alias_)), suit(suit_), allies(allies_), enemies(enemies_) {}
 
-    [[nodiscard]] const std::string& getAlias() const { return alias; }
 
     // operator <<
     friend std::ostream& operator<<(std::ostream& os, const Batman& b) {
