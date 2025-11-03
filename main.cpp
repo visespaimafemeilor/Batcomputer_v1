@@ -311,6 +311,37 @@ public:
 
 };
 
+class Batman {
+private:
+    std::string alias;
+    Batsuit suit;
+    std::vector<Family> allies;
+    std::vector<Criminal> enemies;
+
+public:
+    Batman(std::string alias_, const Batsuit& suit_,
+           const std::vector<Family>& allies_,
+           const std::vector<Criminal>& enemies_)
+        : alias(std::move(alias_)), suit(suit_), allies(allies_), enemies(enemies_) {}
+
+    [[nodiscard]] const std::string& getAlias() const { return alias; }
+
+    // operator <<
+    friend std::ostream& operator<<(std::ostream& os, const Batman& b) {
+        os << "=== BATMAN PROFILE ===\n";
+        os << "Alias: " << b.alias << "\n\n";
+        os << "--- Batsuit ---\n" << b.suit << "\n";
+        os << "--- Allies ---\n";
+        for (const auto& f : b.allies)
+            os << f << "\n";
+        os << "--- Known Criminals ---\n";
+        for (const auto& c : b.enemies)
+            os << c << "\n";
+        return os;
+    }
+};
+
+
 int main(){
 
     std::cout<<"Welcome, Dark Knight!\n";
@@ -348,6 +379,11 @@ int main(){
         if(!b.loadBatsuit(file3)) break;
         suit.push_back(b);
     }
+
+    Batsuit mainSuit = suit.empty() ? Batsuit() : suit[0];
+    Batman bruce("The Dark Knight", mainSuit, family, criminals);
+
+    std::cout << "\n\n" << bruce;
 
     //TODO: MENIU
     int choice = -1;
@@ -550,7 +586,7 @@ int main(){
                     if(c.getName() == name){
                         found = true;
                         bool escaped = c.simulateEscape(securityLevel);
-                        std::cout << (escaped ? "⚠️ ESCAPED!" : "✅ Contained.") << "\n";
+                        std::cout << (escaped ? "ESCAPED!" : "Contained.") << "\n";
                         break;
                     }
                 }
