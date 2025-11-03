@@ -7,6 +7,7 @@
 #include <sstream>
 #include <random>
 
+//criminals
 class Criminal{
 private:
     int id;
