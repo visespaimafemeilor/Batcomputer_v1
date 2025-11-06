@@ -602,6 +602,5 @@ int main(){
                 std::cout << "Invalid option. Try again.\n";
         }
     }
-
     return 0;
 }
