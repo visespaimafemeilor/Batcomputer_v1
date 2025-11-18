@@ -1,0 +1,114 @@
+#include "family.h"
+
+Family::Family(std::string codename_, std::string civilian_name_, int physical_power_, const std::vector<std::string>& skills_) :
+    codename{std::move(codename_)},
+    civilian_name{std::move(civilian_name_)},
+    physical_power{physical_power_},
+    skills{skills_}
+{}
+
+Family::Family(const Family& other) :
+    codename{other.codename},
+    civilian_name{other.civilian_name},
+    physical_power {other.physical_power},
+    skills {other.skills}
+{}
+
+Family& Family::operator=(const Family& other) {
+    codename = other.codename;
+    civilian_name = other.civilian_name;
+    physical_power = other.physical_power;
+    skills = other.skills;
+    return *this;
+}
+
+Family::~Family(){}
+
+std::ostream& operator<<(std::ostream& os, const Family& f)
+{
+    os<<"Name: "<<f.civilian_name<<" AKA "<<f.codename<<"\n";
+    os<<"Power: "<<f.physical_power<<"\n";
+    return os;
+}
+
+const std::string& Family::getCodename() const {return codename;}
+const std::string& Family::getCivilianName() const {return civilian_name;}
+int Family::getPhysicalPower() const {return physical_power;}
+const std::vector<std::string>& Family::getSkills() const {return skills;}
+
+bool Family::loadFamilyMember(std::istream& file)
+{
+    file >> std::ws;
+    if(!getline(file, codename))
+        return false;
+    if(codename.empty())
+        return false;
+    file >> std::ws;
+    if(!getline(file, civilian_name))
+        return false;
+    if(civilian_name.empty())
+        return false;
+    if(!(file >> physical_power))
+        return false;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    int skillCount;
+    if(!(file >> skillCount))
+        return false;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (physical_power < 0) physical_power = 0;
+    if (skillCount < 0) skillCount = 0;
+    skills.clear();
+    for(int i = 0; i < skillCount; ++i)
+    {
+        file >> std::ws;
+        std::string s;
+        if(!getline(file, s))
+            return false;
+        if(!s.empty())
+            skills.push_back(s);
+    }
+    return true;
+}
+
+bool Family::fight(const Criminal& enemy) const{
+    return physical_power>enemy.getRank();
+}
+
+std::string Family::fightReport(const Criminal& enemy) const{
+    std::string report = codename + " vs " + enemy.getName() + "\n";
+    report += "Power: " + std::to_string(physical_power) + " vs Rank: " + std::to_string(enemy.getRank()) + "\n";
+    if (fight(enemy)){
+        report+= "Result: Victory\n";
+    }
+    else{
+        report+="Result: Defeat\n";
+    }
+    return report;
+}
+
+std::string Family::simulateBattle(const Criminal& enemy) const{
+    int myPower=physical_power;
+    int enemyPower=enemy.getRank()*10;
+    int round = 0;
+    std::ostringstream report;
+
+    report << "Battle: " <<codename << " VS "<<enemy.getName()<<"\n";
+
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    while (myPower>0 && enemyPower>0){
+        round++;
+
+        std::uniform_int_distribution<> myHitDistrib(5, 20);
+        std::uniform_int_distribution<> enemyHitDistrib(3, 15);
+
+        int myHit = myHitDistrib(gen);
+        int enemyHit = enemyHitDistrib(gen);
+        enemyPower -= myHit;
+        myPower -= enemyHit;
+        report << "Round "<<round<<": "<<codename<<" hits "<<myHit<<" | "<<enemy.getName()<<" hits "<<enemyHit<<"\n";
+    }
+    report<<"Winner: "<<(myPower>0 ? codename : enemy.getName())<<"\n";
+    return report.str();
+}
