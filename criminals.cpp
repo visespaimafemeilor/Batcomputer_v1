@@ -1,15 +1,16 @@
+//criminals.cpp
 #include "criminals.h"
 
-using namespace std;
 
-Criminal::Criminal(int id_, string name_, int rank_, const vector<string>& intel_) :
+Criminal::Criminal(int id_, std::string name_, int rank_, const std::vector<std::string>& intel_) :
+    Batman(std::move(name_)),
     id{id_},
-    name{std::move(name_)},
     rank{rank_},
     intel{intel_}
 {}
 
-ostream& operator<<(ostream& os, const Criminal& cr)
+
+std::ostream& operator<<(std::ostream& os, const Criminal& cr)
 {
     os<<"Id: "<<cr.id<< "Codename: "<<cr.name<<"\n";
     os<<"Rank: "<<cr.rank<<"\n";
@@ -17,28 +18,28 @@ ostream& operator<<(ostream& os, const Criminal& cr)
 }
 
 int Criminal::getId() const {return id;}
-const string& Criminal::getName() const  { return name; }
+//const string& Criminal::getName() const  { return name; }
 int Criminal::getRank() const  { return rank; }
-const vector<string>& Criminal::getIntel() const  { return intel; }
+const std::vector<std::string>& Criminal::getIntel() const  { return intel; }
 
-bool Criminal::loadCriminal(istream& file)
+bool Criminal::loadCriminal(std::istream& file)
 {
     if(!(file >> id))
         return false;
-    file.ignore(numeric_limits<streamsize>::max(), '\n');
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     if(!getline(file, name))
         return false;
     if(!(file >> rank))
         return false;
-    file.ignore(numeric_limits<streamsize>::max(), '\n');
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     int intelCount;
     if(!(file >> intelCount))
         return false;
-    file.ignore(numeric_limits<streamsize>::max(), '\n');
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     intel.clear();
     for(int i = 0; i < intelCount; ++i)
     {
-        string line;
+        std::string line;
         if(!getline(file, line))
             return false;
         intel.push_back(line);
@@ -59,13 +60,14 @@ double Criminal::calculateThreatLevel() const{
 }
 
 bool Criminal::simulateEscape(double facilitySecurityLevel) const{
-    static random_device rd;
-    static mt19937 gen(rd());
-    uniform_real_distribution<> distrib(0.0, 100.0);
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_real_distribution<> distrib(0.0, 100.0);
     const double baseChance = rank * 2.0;
     double escapeChance = baseChance * 10.0 / facilitySecurityLevel;
     if (escapeChance > 100.0) escapeChance = 100.0;
     const double randomValue = distrib(gen);
-    cout << name << " escape chance: " << escapeChance <<  "% |Roll: " <<randomValue <<"\n";
+    std::cout << name << " escape chance: " << escapeChance <<  "% |Roll: " <<randomValue <<"\n";
     return randomValue < escapeChance;
 }
+

@@ -1,6 +1,6 @@
+//batsuit.cpp
 #include "batsuit.h"
 
-using namespace std;
 
 void Batsuit::normalize(){
     if (level<1) level =1;
@@ -8,33 +8,34 @@ void Batsuit::normalize(){
     if (integrity>100) integrity=100;
 }
 
-Batsuit::Batsuit(int level_, string part_, double integrity_) :
+Batsuit::Batsuit(int level_, std::string part_, double integrity_) :
+    Batman{std::move(part_)},
     level{level_},
-    part{std::move(part_)},
+    //part{std::move(part_)},
     integrity{integrity_}
 {}
 
-ostream& operator<<(ostream& os, const Batsuit& bs)
+std::ostream& operator<<(std::ostream& os, const Batsuit& bs)
 {
-    os<<"Suit part: "<<bs.part<<"\n";
+    os<<"Suit part: "<<bs.name<<"\n";
     os<<"Level: "<<bs.level<< "--- Integrity: "<<bs.integrity<<"\n";
     return os;
 }
 
 int Batsuit::getLevel() const {return level;}
-const string& Batsuit::getPart() const {return part;}
+const std::string& Batsuit::getPart() const {return name;}
 double Batsuit::getIntegrity() const {return integrity;}
 
-bool Batsuit::loadBatsuit(istream& file)
+bool Batsuit::loadBatsuit(std::istream& file)
 {
     if(!(file >> level))
         return false;
-    file.ignore(numeric_limits<streamsize>::max(), '\n');
-    if(!getline(file, part))
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if(!getline(file, name))
         return false;
     if(!(file >> integrity))
         return false;
-    file.ignore(numeric_limits<streamsize>::max(), '\n');
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     normalize();
     return true;
 }
@@ -43,10 +44,10 @@ bool Batsuit::isCritical(double muchie) const{
     return integrity<muchie;
 }
 
-string Batsuit::statusReport() const{
-    string status = "Batsuit part: " + part +"\n";
-    status+="Level: "+to_string(level)+"\n";
-    status+="Integrity: "+to_string(integrity)+"\n";
+std::string Batsuit::statusReport() const{
+    std::string status = "Batsuit part: " + name +"\n";
+    status+="Level: "+std::to_string(level)+"\n";
+    status+="Integrity: "+std::to_string(integrity)+"\n";
     if(isCritical())
         status+="ALERT! Critical condition!\n";
     else if (integrity<70)
@@ -60,5 +61,6 @@ void Batsuit::applyBattleDamage(int damageBad){
     const double degradation = damageBad / static_cast<double>(level);
     integrity-=degradation;
     if (integrity<0) integrity=0;
-    cout << "Batsuit took "<<degradation<<"% damage! Integrity now at "<<integrity<<"%\n";
+    std::cout << "Batsuit took "<<degradation<<"% damage! Integrity now at "<<integrity<<"%\n";
 }
+

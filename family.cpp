@@ -1,12 +1,13 @@
+//family.cpp
 #include "family.h"
 
 Family::Family(std::string codename_, std::string civilian_name_, int physical_power_, const std::vector<std::string>& skills_) :
-    codename{std::move(codename_)},
+    Batman{std::move(codename_)},
     civilian_name{std::move(civilian_name_)},
     physical_power{physical_power_},
     skills{skills_}
 {}
-
+/*
 Family::Family(const Family& other) :
     codename{other.codename},
     civilian_name{other.civilian_name},
@@ -23,15 +24,16 @@ Family& Family::operator=(const Family& other) {
 }
 
 Family::~Family(){}
+*/
 
 std::ostream& operator<<(std::ostream& os, const Family& f)
 {
-    os<<"Name: "<<f.civilian_name<<" AKA "<<f.codename<<"\n";
+    os<<"Name: "<<f.civilian_name<<" AKA "<<f.name<<"\n";
     os<<"Power: "<<f.physical_power<<"\n";
     return os;
 }
 
-const std::string& Family::getCodename() const {return codename;}
+const std::string& Family::getCodename() const {return name;}
 const std::string& Family::getCivilianName() const {return civilian_name;}
 int Family::getPhysicalPower() const {return physical_power;}
 const std::vector<std::string>& Family::getSkills() const {return skills;}
@@ -39,9 +41,9 @@ const std::vector<std::string>& Family::getSkills() const {return skills;}
 bool Family::loadFamilyMember(std::istream& file)
 {
     file >> std::ws;
-    if(!getline(file, codename))
+    if(!getline(file, name))
         return false;
-    if(codename.empty())
+    if(name.empty())
         return false;
     file >> std::ws;
     if(!getline(file, civilian_name))
@@ -75,7 +77,7 @@ bool Family::fight(const Criminal& enemy) const{
 }
 
 std::string Family::fightReport(const Criminal& enemy) const{
-    std::string report = codename + " vs " + enemy.getName() + "\n";
+    std::string report = name + " vs " + enemy.getName() + "\n";
     report += "Power: " + std::to_string(physical_power) + " vs Rank: " + std::to_string(enemy.getRank()) + "\n";
     if (fight(enemy)){
         report+= "Result: Victory\n";
@@ -92,7 +94,7 @@ std::string Family::simulateBattle(const Criminal& enemy) const{
     int round = 0;
     std::ostringstream report;
 
-    report << "Battle: " <<codename << " VS "<<enemy.getName()<<"\n";
+    report << "Battle: " <<name << " VS "<<enemy.getName()<<"\n";
 
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -107,8 +109,8 @@ std::string Family::simulateBattle(const Criminal& enemy) const{
         int enemyHit = enemyHitDistrib(gen);
         enemyPower -= myHit;
         myPower -= enemyHit;
-        report << "Round "<<round<<": "<<codename<<" hits "<<myHit<<" | "<<enemy.getName()<<" hits "<<enemyHit<<"\n";
+        report << "Round "<<round<<": "<<name<<" hits "<<myHit<<" | "<<enemy.getName()<<" hits "<<enemyHit<<"\n";
     }
-    report<<"Winner: "<<(myPower>0 ? codename : enemy.getName())<<"\n";
+    report<<"Winner: "<<(myPower>0 ? name : enemy.getName())<<"\n";
     return report.str();
 }

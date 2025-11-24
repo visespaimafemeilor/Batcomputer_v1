@@ -4,17 +4,22 @@
 #include <fstream>
 #include <limits>
 #include "criminals.h"
-#include "Family.h"
-#include "Batsuit.h"
-#include "Batman.h"
+#include "family.h"
+#include "batsuit.h"
+#include "batman.h"
 
 int main(){
 
     std::cout<<"Welcome, Dark Knight!\n";
 
     std::vector<Criminal> criminals;
+    criminals.reserve(20);
     std::vector<Family> family;
+    family.reserve(20);
     std::vector<Batsuit> suit;
+    suit.reserve(20);
+
+    std::vector<Batman*> database;
 
     std::ifstream file1("criminals.txt");
     std::ifstream file2("family.txt");
@@ -30,11 +35,17 @@ int main(){
         if(!c.loadCriminal(file1)) break;
         criminals.push_back(c);
     }
+    for(auto & criminal : criminals) {
+        database.push_back(&criminal);
+    }
 
     while(true) {
         Family m;
         if(!m.loadFamilyMember(file2)) break;
         family.push_back(m);
+    }
+    for(auto & i : family) {
+        database.push_back(&i);
     }
 
     while(true) {
@@ -42,11 +53,12 @@ int main(){
         if(!b.loadBatsuit(file3)) break;
         suit.push_back(b);
     }
+    for(auto & i : suit) {
+        database.push_back(&i);
+    }
 
-    Batsuit mainSuit = suit.empty() ? Batsuit() : suit[0];
-    Batman bruce("The Dark Knight", mainSuit, family, criminals);
-
-    std::cout << "\n\n" << bruce;
+    std::cout << "[SYSTEM ONLINE] Welcome, Dark Knight.\n";
+    std::cout << "Entities loaded: " << database.size() << "\n";
 
     //TODO: MENIU
     int choice = -1;

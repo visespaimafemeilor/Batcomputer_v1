@@ -1,27 +1,19 @@
 #ifndef BATMAN_H
 #define BATMAN_H
 
-#include <iostream>
 #include <string>
-#include <vector>
+#include <iostream>
 #include <utility>
-#include "batsuit.h"
-#include "family.h"
-#include "criminals.h"
 
 class Batman {
-private:
-    std::string alias;
-    Batsuit suit;
-    std::vector<Family> allies;
-    std::vector<Criminal> enemies;
+protected:
+    std::string name;
 
 public:
-    Batman(std::string alias_, const Batsuit& suit_,
-           const std::vector<Family>& allies_,
-           const std::vector<Criminal>& enemies_);
-
-    friend std::ostream& operator<<(std::ostream& os, const Batman& b);
+    explicit Batman(std::string n = "Unknown");
+    virtual ~Batman();
+    [[nodiscard]] const std::string& getName() const;
+    virtual void displayInfo() const = 0;
 };
 
 #endif
