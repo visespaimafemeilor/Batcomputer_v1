@@ -1,5 +1,3 @@
-// main.cpp (Final)
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -27,28 +25,24 @@ int main(){
         return 1;
     }
 
-    //load criminals
     while(true) {
         Criminal c;
         if(!c.loadCriminal(file1)) break;
         criminals.push_back(c);
     }
 
-    //load family members
     while(true) {
         Family m;
         if(!m.loadFamilyMember(file2)) break;
         family.push_back(m);
     }
 
-    //load batsuit
     while(true) {
         Batsuit b;
         if(!b.loadBatsuit(file3)) break;
         suit.push_back(b);
     }
 
-    // Aici se folosesc clasele si metodele
     Batsuit mainSuit = suit.empty() ? Batsuit() : suit[0];
     Batman bruce("The Dark Knight", mainSuit, family, criminals);
 
@@ -73,19 +67,16 @@ int main(){
         std::cout << "10) Simulate Escape Attempt\n";
         std::cout << "0) Exit\n";
         std::cout << "Enter choice: ";
-        // Aici ai nevoie de verificari de erori pentru cin, dar pentru simplitate...
         if (!(std::cin >> choice)) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            choice = -1; // Force re-entry
+            choice = -1;
             continue;
         }
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch(choice)
         {
-            // Toti ceilalti case-uri raman neschimbate, deoarece folosesc
-            // metodele publice declarate in headere.
             case 1:{
                 std::cout << "\n=== Criminal Database ===\n";
                 for(const auto& c : criminals){
@@ -223,7 +214,6 @@ int main(){
                 std::cout << "\nBatsuit Status Report\n";
                 for(auto& b : suit){
                     std::cout << b.statusReport() << "\n";
-                    // Simulăm o lovitură
                     b.applyBattleDamage(10);
                     std::cout << "After damage: " << b.statusReport() << "\n";
                 }
@@ -235,7 +225,6 @@ int main(){
                 std::string name;
                 std::getline(std::cin, name);
                 bool found = false;
-                // Trebuie să iterăm cu auto& pentru a putea modifica obiectul
                 for(auto& c : criminals){
                     if(c.getName() == name){
                         c.promote();
@@ -256,7 +245,6 @@ int main(){
                 std::getline(std::cin, name);
                 double securityLevel;
                 std::cout << "Enter facility security level (1-10): ";
-                // De asemenea, verificare de erori la citirea lui double
                 if (!(std::cin >> securityLevel)) {
                     std::cout << "Invalid security level entered.\n";
                     std::cin.clear();
