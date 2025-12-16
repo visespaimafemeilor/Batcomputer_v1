@@ -70,4 +70,3 @@ bool Criminal::simulateEscape(double facilitySecurityLevel) const{
     std::cout << name << " escape chance: " << escapeChance <<  "% |Roll: " <<randomValue <<"\n";
     return randomValue < escapeChance;
 }
-

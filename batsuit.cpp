@@ -63,4 +63,3 @@ void Batsuit::applyBattleDamage(int damageBad){
     if (integrity<0) integrity=0;
     std::cout << "Batsuit took "<<degradation<<"% damage! Integrity now at "<<integrity<<"%\n";
 }
-
