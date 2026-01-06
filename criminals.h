@@ -18,7 +18,10 @@ private:
     std::vector<std::string> intel;
 
 public:
+    static int criminalCount;
+
     explicit Criminal(int id_ = 1, std::string  name_ = "cr", int rank_ = 1, const std::vector<std::string>& intel_ = {"intel 1"});
+    ~Criminal() override;
 
     void displayInfo() const override
     {
@@ -45,6 +48,8 @@ public:
     //[[nodiscard]] const std::string& getName() const;
     [[nodiscard]] int getRank() const;
     [[nodiscard]] const std::vector<std::string>& getIntel() const;
+
+    static int getCriminalCount() { return criminalCount; }
 
     bool loadCriminal(std::istream& file);
     void promote(int inc=1);

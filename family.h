@@ -20,7 +20,10 @@ private:
     std::vector<std::string> skills;
 
 public:
+    static int familyMemberCount;
+
     explicit Family(std::string  codename_ = "mem", std::string  civilian_name_ = "mem", int physical_power_ = 1, const std::vector<std::string>& skills_ = {"skill"});
+    ~Family() override;
 
     void displayInfo() const override
     {
@@ -46,6 +49,8 @@ public:
     [[nodiscard]] const std::string& getCivilianName() const;
     [[nodiscard]] int getPhysicalPower() const;
     [[nodiscard]] const std::vector<std::string>& getSkills() const;
+
+    static int getFamilyMemberCount() { return familyMemberCount; }
 
     bool loadFamilyMember(std::istream& file);
     [[nodiscard]] bool fight(const Criminal& enemy) const;

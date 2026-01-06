@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 
+int Batsuit::suitPartCount = 0;
 
 void Batsuit::normalize(){
     if (level<1) level =1;
@@ -15,7 +16,9 @@ Batsuit::Batsuit(int level_, std::string part_, double integrity_) :
     level{level_},
     //part{std::move(part_)},
     integrity{integrity_}
-{}
+{ ++suitPartCount; }
+
+Batsuit::~Batsuit() { --suitPartCount; }
 
 std::ostream& operator<<(std::ostream& os, const Batsuit& bs)
 {
@@ -29,7 +32,7 @@ double Batsuit::assessThreat() const {
 }
 
 Batsuit::Batsuit(const Batsuit& other)
-    : DatabaseEntry(other), level(other.level), integrity(other.integrity) {}
+    : DatabaseEntry(other), level(other.level), integrity(other.integrity) { ++suitPartCount; }
 
 void swap(Batsuit& a, Batsuit& b) noexcept {
     using std::swap;

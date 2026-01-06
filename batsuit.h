@@ -17,7 +17,10 @@ private:
     void normalize();
 
 public:
+    static int suitPartCount;
+
     explicit Batsuit(int level_ = 1, std::string  part_ = "p", double integrity_ = 1.00);
+    ~Batsuit() override;
 
     void displayInfo() const override
     {
@@ -42,6 +45,8 @@ public:
     [[nodiscard]] int getLevel() const;
     [[nodiscard]] const std::string& getPart() const;
     [[nodiscard]] double getIntegrity() const;
+
+    static int getSuitPartCount() { return suitPartCount; }
 
     bool loadBatsuit(std::istream& file);
     [[nodiscard]] bool isCritical(double muchie=30.0) const;

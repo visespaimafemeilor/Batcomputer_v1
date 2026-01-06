@@ -2,19 +2,23 @@
 #include "family.h"
 #include <memory>
 
+int Family::familyMemberCount = 0;
+
 Family::Family(std::string codename_, std::string civilian_name_, int physical_power_, const std::vector<std::string>& skills_) :
     DatabaseEntry(std::move(codename_)),
     civilian_name{std::move(civilian_name_)},
     physical_power{physical_power_},
     skills{skills_}
-{}
+{ ++familyMemberCount; }
+
+Family::~Family() { --familyMemberCount; }
 
 Family::Family(const Family& other) :
     DatabaseEntry(other),
     civilian_name(other.civilian_name),
     physical_power(other.physical_power),
     skills(other.skills)
-{}
+{ ++familyMemberCount; }
 
 void swap(Family& a, Family& b) noexcept {
     using std::swap;

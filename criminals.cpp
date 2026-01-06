@@ -3,13 +3,16 @@
 #include <memory>
 #include <utility>
 
+int Criminal::criminalCount = 0;
 
 Criminal::Criminal(int id_, std::string name_, int rank_, const std::vector<std::string>& intel_) :
     DatabaseEntry(std::move(name_)),
     id{id_},
     rank{rank_},
     intel{intel_}
-{}
+{ ++criminalCount; }
+
+Criminal::~Criminal() { --criminalCount; }
 
 
 std::ostream& operator<<(std::ostream& os, const Criminal& cr)
@@ -66,7 +69,7 @@ double Criminal::assessThreat() const {
 }
 
 Criminal::Criminal(const Criminal& other) 
-    : DatabaseEntry(other), id(other.id), rank(other.rank), intel(other.intel) {}
+    : DatabaseEntry(other), id(other.id), rank(other.rank), intel(other.intel) { ++criminalCount; }
 
 void swap(Criminal& a, Criminal& b) noexcept {
     using std::swap;
