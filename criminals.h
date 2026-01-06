@@ -2,7 +2,7 @@
 #ifndef CRIMINAL_H
 #define CRIMINAL_H
 
-#include "batman.h"
+#include "database_entry.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,7 +10,7 @@
 #include <limits>
 #include <random>
 
-class Criminal : public Batman{
+class Criminal : public DatabaseEntry{
 private:
     int id;
     //std::string name;
@@ -26,9 +26,18 @@ public:
         std::cout<<"Rank: "<<rank<<"\n";
     }
 
-    //Criminal(const Criminal& other) = default;
-    //Criminal& operator=(const Criminal& other) = default;
-    //~Criminal() = default;
+    double assessThreat() const override;
+    std::unique_ptr<DatabaseEntry> clone() const override;
+
+    // DatabaseEntry interface
+    std::string type() const override;
+    std::string summary() const override;
+    bool load(std::istream& in) override;
+    void save(std::ostream& out) const override;
+
+    Criminal(const Criminal& other);
+    Criminal& operator=(Criminal other);
+    friend void swap(Criminal& a, Criminal& b) noexcept;
 
     friend std::ostream& operator<<(std::ostream& os, const Criminal& cr);
 

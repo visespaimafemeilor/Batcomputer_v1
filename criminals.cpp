@@ -1,9 +1,11 @@
 //criminals.cpp
 #include "criminals.h"
+#include <memory>
+#include <utility>
 
 
 Criminal::Criminal(int id_, std::string name_, int rank_, const std::vector<std::string>& intel_) :
-    Batman(std::move(name_)),
+    DatabaseEntry(std::move(name_)),
     id{id_},
     rank{rank_},
     intel{intel_}
@@ -57,6 +59,51 @@ double Criminal::calculateThreatLevel() const{
     if (rank>8 && intel.size()>5)
         score*=1.2;
     return score;
+}
+
+double Criminal::assessThreat() const {
+    return calculateThreatLevel();
+}
+
+Criminal::Criminal(const Criminal& other) 
+    : DatabaseEntry(other), id(other.id), rank(other.rank), intel(other.intel) {}
+
+void swap(Criminal& a, Criminal& b) noexcept {
+    using std::swap;
+    swap(a.name, b.name);
+    swap(a.id, b.id);
+    swap(a.rank, b.rank);
+    swap(a.intel, b.intel);
+}
+
+Criminal& Criminal::operator=(Criminal other) {
+    swap(*this, other);
+    return *this;
+}
+
+std::unique_ptr<DatabaseEntry> Criminal::clone() const {
+    return std::make_unique<Criminal>(*this);
+}
+
+// DatabaseEntry implementations
+std::string Criminal::type() const {
+    return std::string("Criminal");
+}
+
+std::string Criminal::summary() const {
+    return "Criminal: " + name + " (Rank: " + std::to_string(rank) + ")";
+}
+
+bool Criminal::load(std::istream& in) {
+    return loadCriminal(in);
+}
+
+void Criminal::save(std::ostream& out) const {
+    out << id << "\n";
+    out << name << "\n";
+    out << rank << "\n";
+    out << intel.size() << "\n";
+    for(const auto& s : intel) out << s << "\n";
 }
 
 bool Criminal::simulateEscape(double facilitySecurityLevel) const{

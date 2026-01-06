@@ -1,36 +1,68 @@
 //family.cpp
 #include "family.h"
+#include <memory>
 
 Family::Family(std::string codename_, std::string civilian_name_, int physical_power_, const std::vector<std::string>& skills_) :
-    Batman{std::move(codename_)},
+    DatabaseEntry(std::move(codename_)),
     civilian_name{std::move(civilian_name_)},
     physical_power{physical_power_},
     skills{skills_}
 {}
-/*
+
 Family::Family(const Family& other) :
-    codename{other.codename},
-    civilian_name{other.civilian_name},
-    physical_power {other.physical_power},
-    skills {other.skills}
+    DatabaseEntry(other),
+    civilian_name(other.civilian_name),
+    physical_power(other.physical_power),
+    skills(other.skills)
 {}
 
-Family& Family::operator=(const Family& other) {
-    codename = other.codename;
-    civilian_name = other.civilian_name;
-    physical_power = other.physical_power;
-    skills = other.skills;
+void swap(Family& a, Family& b) noexcept {
+    using std::swap;
+    swap(a.name, b.name);
+    swap(a.civilian_name, b.civilian_name);
+    swap(a.physical_power, b.physical_power);
+    swap(a.skills, b.skills);
+}
+
+Family& Family::operator=(Family other) {
+    swap(*this, other);
     return *this;
 }
 
-Family::~Family(){}
-*/
+std::unique_ptr<DatabaseEntry> Family::clone() const {
+    return std::make_unique<Family>(*this);
+}
+
+// DatabaseEntry implementations
+std::string Family::type() const {
+    return std::string("Family");
+}
+
+std::string Family::summary() const {
+    return "Family member: " + name + " (Civilian: " + civilian_name + ")";
+}
+
+bool Family::load(std::istream& in) {
+    return loadFamilyMember(in);
+}
+
+void Family::save(std::ostream& out) const {
+    out << name << "\n";
+    out << civilian_name << "\n";
+    out << physical_power << "\n";
+    out << skills.size() << "\n";
+    for(const auto& s : skills) out << s << "\n";
+}
 
 std::ostream& operator<<(std::ostream& os, const Family& f)
 {
     os<<"Name: "<<f.civilian_name<<" AKA "<<f.name<<"\n";
     os<<"Power: "<<f.physical_power<<"\n";
     return os;
+}
+
+double Family::assessThreat() const {
+    return physical_power * 8.0 + static_cast<double>(skills.size()) * 5.0;
 }
 
 const std::string& Family::getCodename() const {return name;}

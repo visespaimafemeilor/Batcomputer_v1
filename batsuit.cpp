@@ -1,5 +1,7 @@
 //batsuit.cpp
 #include "batsuit.h"
+#include <memory>
+#include <utility>
 
 
 void Batsuit::normalize(){
@@ -9,7 +11,7 @@ void Batsuit::normalize(){
 }
 
 Batsuit::Batsuit(int level_, std::string part_, double integrity_) :
-    Batman{std::move(part_)},
+    DatabaseEntry(std::move(part_)),
     level{level_},
     //part{std::move(part_)},
     integrity{integrity_}
@@ -20,6 +22,49 @@ std::ostream& operator<<(std::ostream& os, const Batsuit& bs)
     os<<"Suit part: "<<bs.name<<"\n";
     os<<"Level: "<<bs.level<< "--- Integrity: "<<bs.integrity<<"\n";
     return os;
+}
+
+double Batsuit::assessThreat() const {
+    return (100.0 - integrity) * static_cast<double>(level) * 0.5;
+}
+
+Batsuit::Batsuit(const Batsuit& other)
+    : DatabaseEntry(other), level(other.level), integrity(other.integrity) {}
+
+void swap(Batsuit& a, Batsuit& b) noexcept {
+    using std::swap;
+    swap(a.name, b.name);
+    swap(a.level, b.level);
+    swap(a.integrity, b.integrity);
+}
+
+
+Batsuit& Batsuit::operator=(Batsuit other) {
+    swap(*this, other);
+    return *this;
+}
+
+std::unique_ptr<DatabaseEntry> Batsuit::clone() const {
+    return std::make_unique<Batsuit>(*this);
+}
+
+// DatabaseEntry implementations
+std::string Batsuit::type() const {
+    return std::string("Batsuit");
+}
+
+std::string Batsuit::summary() const {
+    return "Batsuit part: " + name + " (Integrity: " + std::to_string(integrity) + ")";
+}
+
+bool Batsuit::load(std::istream& in) {
+    return loadBatsuit(in);
+}
+
+void Batsuit::save(std::ostream& out) const {
+    out << level << "\n";
+    out << name << "\n";
+    out << integrity << "\n";
 }
 
 int Batsuit::getLevel() const {return level;}

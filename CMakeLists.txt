@@ -56,8 +56,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         family.h
         batsuit.cpp
         batsuit.h
-        batman.cpp
-        batman.h
+        database_entry.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

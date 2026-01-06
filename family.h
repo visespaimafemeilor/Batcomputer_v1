@@ -10,9 +10,9 @@
 #include <sstream>
 #include <random>
 #include "criminals.h"
-#include "batman.h"
+#include "database_entry.h"
 
-class Family : public Batman{
+class Family : public DatabaseEntry{
 private:
     //std::string codename;
     std::string civilian_name;
@@ -26,9 +26,19 @@ public:
     {
         std::cout << "--BAT-FAMILY MEMBER: "<<name<<" ("<<civilian_name<<")--\n";
     }
-    //Family(const Family& other);
-    //Family& operator=(const Family& other);
-    //~Family();
+
+    double assessThreat() const override;
+    std::unique_ptr<DatabaseEntry> clone() const override;
+
+    // DatabaseEntry interface
+    std::string type() const override;
+    std::string summary() const override;
+    bool load(std::istream& in) override;
+    void save(std::ostream& out) const override;
+
+    Family(const Family& other);
+    Family& operator=(Family other);
+    friend void swap(Family& a, Family& b) noexcept;
 
     friend std::ostream& operator<<(std::ostream& os, const Family& f);
 
@@ -44,4 +54,3 @@ public:
 };
 
 #endif
-

@@ -2,13 +2,13 @@
 #ifndef BATSUIT_H
 #define BATSUIT_H
 
-#include "batman.h"
+#include "database_entry.h"
 #include <iostream>
 #include <string>
 #include <utility>
 #include <limits>
 
-class Batsuit : public Batman{
+class Batsuit : public DatabaseEntry{
 private:
     int level;
     //std::string part;
@@ -24,9 +24,18 @@ public:
         std::cout<<"-- SUIT COMPONENT: "<< name<<" (Integrity: "<<integrity<<"%) --\n";
     }
 
-    //Batsuit(const Batsuit& other) = default;
-    //Batsuit& operator= (const Batsuit& other) = default;
-    //~Batsuit() = default;
+    double assessThreat() const override;
+    std::unique_ptr<DatabaseEntry> clone() const override;
+
+    // DatabaseEntry interface
+    std::string type() const override;
+    std::string summary() const override;
+    bool load(std::istream& in) override;
+    void save(std::ostream& out) const override;
+
+    Batsuit(const Batsuit& other);
+    Batsuit& operator=(Batsuit other);
+    friend void swap(Batsuit& a, Batsuit& b) noexcept;
 
     friend std::ostream& operator<<(std::ostream& os, const Batsuit& bs);
 
