@@ -2,7 +2,7 @@
 #define CRIME_LORD_H
 #include "criminals.h"
 
-class CrimeLord : public Criminal {
+class CrimeLord final : public Criminal {
 public:
     using Criminal::Criminal; // Moștenește constructorii
 

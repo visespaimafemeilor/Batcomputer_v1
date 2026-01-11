@@ -4,7 +4,7 @@
 #include "criminals.h"
 
 class BankRobber final : public Criminal {
-private:
+protected:
     int successfulHeists;
     bool hasGetawayVehicle;
 
@@ -17,7 +17,7 @@ public:
     [[nodiscard]] double calculateThreatLevel() const override {
         double base = Criminal::calculateThreatLevel();
         if (hasGetawayVehicle) base += 15.0; // Mai greu de prins
-        return base + (successfulHeists * 2);
+        return base + successfulHeists * 2;
     }
 
     [[nodiscard]] std::string type() const override { return "Bank Robber"; }
@@ -36,7 +36,7 @@ public:
         if (!Criminal::load(in)) return false;
         int vehicleInt;
         in >> successfulHeists >> vehicleInt;
-        hasGetawayVehicle = (vehicleInt == 1);
+        hasGetawayVehicle = vehicleInt == 1;
         return true;
     }
 };

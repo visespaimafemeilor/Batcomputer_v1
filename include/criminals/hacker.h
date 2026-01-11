@@ -2,8 +2,8 @@
 #define HACKER_H
 #include "criminals.h"
 
-class Hacker : public Criminal {
-private:
+class Hacker final : public Criminal {
+protected:
     int bypassLevel;
 public:
     explicit Hacker(const int id_ = 0, const std::string& name_ = "", const int rank_ = 1, const int bypass_ = 5)
@@ -15,7 +15,7 @@ public:
     }
 
     [[nodiscard]] double calculateThreatLevel() const override {
-        return Criminal::calculateThreatLevel() + (bypassLevel * 5);
+        return Criminal::calculateThreatLevel() + bypassLevel * 5;
     }
 
     [[nodiscard]] std::string type() const override { return "Hacker"; }

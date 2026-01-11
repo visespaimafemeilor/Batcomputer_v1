@@ -14,7 +14,7 @@ protected:
 public:
     static int familyMemberCount;
 
-    explicit Family(std::string codename_ = "", std::string civilian_name_ = "", int physical_power_ = 0, const std::vector<std::string>& skills_ = {})
+    explicit Family(std::string codename_ = "", std::string civilian_name_ = "", const int physical_power_ = 0, const std::vector<std::string>& skills_ = {})
         : DatabaseEntry(std::move(codename_)), civilian_name(std::move(civilian_name_)), physical_power(physical_power_), skills(skills_) { ++familyMemberCount; }
     ~Family() override;
 

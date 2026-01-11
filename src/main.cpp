@@ -7,7 +7,7 @@
 // --- PROTOTIPURI SUB-MENIURI ---
 void handleDatabaseMenu(const BatComputer& bc);
 void handleOperationsMenu(BatComputer& bc);
-void handleBatCaveMenu(BatComputer& bc);
+void handleBatCaveMenu(const BatComputer& bc);
 void handleAdminMenu(BatComputer& bc);
 
 // --- FUNCTII UTILS ---
@@ -160,7 +160,7 @@ void handleOperationsMenu(BatComputer& bc) {
     }
 }
 
-void handleBatCaveMenu(BatComputer& bc) {
+void handleBatCaveMenu(const BatComputer& bc) {
     int choice = -1;
     while (choice != 0) {
         std::cout << "\n--- [BAT-CAVE SYSTEMS] ---\n";

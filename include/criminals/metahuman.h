@@ -5,8 +5,8 @@
 
 #include "criminals.h"
 
-class MetaHuman : public Criminal {
-private:
+class MetaHuman final : public Criminal {
+protected:
     std::string powerSource;
     double powerScale;
 
@@ -17,7 +17,7 @@ public:
           powerSource(std::move(source)), powerScale(scale) {}
 
     [[nodiscard]] double calculateThreatLevel() const override {
-        return (Criminal::calculateThreatLevel() * powerScale) + 50.0;
+        return Criminal::calculateThreatLevel() * powerScale + 50.0;
     }
 
     [[nodiscard]] std::string type() const override { return "Meta-Human"; }

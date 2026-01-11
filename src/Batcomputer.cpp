@@ -9,7 +9,6 @@
 #include "criminals/crimeLord.h"
 #include <iostream>
 #include <fstream>
-#include <algorithm>
 
 // --- GESTIUNE DATABASE ---
 
@@ -24,15 +23,15 @@ void BatComputer::loadDatabase() {
 
     database.clear();
     for (int i = 0; i < total; ++i) {
-        auto obj = DatabaseEntry::createFromStream(fin);
-        if (obj) {
+        if (auto obj = DatabaseEntry::createFromStream(fin)) {
             database.push_back(obj);
         }
     }
     std::cout << "[SYSTEM] Loaded " << database.size() << " entities.\n";
 }
 
-void BatComputer::saveDatabase() {
+void BatComputer::saveDatabase() const
+{
     std::ofstream fout(dbFilename);
     if (!fout) {
         throw DatabaseOperationException("Could not open file for saving.");
@@ -61,20 +60,22 @@ void BatComputer::searchCriminal(const std::string& name) const {
     Criminal::searchByName(this->database, name);
 }
 
-void BatComputer::promoteCriminal(const std::string& name) {
+void BatComputer::promoteCriminal(const std::string& name) const
+{
     Criminal::promoteByName(this->database, name);
 }
 
-void BatComputer::simulateBattle(const std::string& familyMember, const std::string& criminalName) {
+void BatComputer::simulateBattle(const std::string& familyMember, const std::string& criminalName) const
+{
     std::shared_ptr<Family> vigilante = nullptr;
     std::shared_ptr<Criminal> enemy = nullptr;
 
     // Căutăm ambele entități în database
     for (auto& e : database) {
-        if (auto f = std::dynamic_pointer_cast<Family>(e)) {
+        if (const auto f = std::dynamic_pointer_cast<Family>(e)) {
             if (f->getCodename() == familyMember) vigilante = f;
         }
-        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
             if (c->getName() == criminalName) enemy = c;
         }
     }
@@ -88,8 +89,9 @@ void BatComputer::simulateBattle(const std::string& familyMember, const std::str
     }
 }
 
-void BatComputer::performInteraction(int idx1, int idx2) {
-    if (idx1 >= 0 && (size_t)idx1 < database.size() && idx2 >= 0 && (size_t)idx2 < database.size()) {
+void BatComputer::performInteraction(const int idx1, const int idx2) const
+{
+    if (idx1 >= 0 && static_cast<size_t>(idx1) < database.size() && idx2 >= 0 && static_cast<size_t>(idx2) < database.size()) {
         std::cout << "Result: " << database[idx1]->interact(*database[idx2]) << "\n";
     } else {
         std::cout << "Invalid indices for interaction.\n";
@@ -103,11 +105,11 @@ void BatComputer::showPolymorphicDatabase() const {
     }
 }
 
-void BatComputer::simulateEscape(const std::string& name, double securityLevel) const {
+void BatComputer::simulateEscape(const std::string& name, const double securityLevel) const {
     for (const auto& e : database) {
-        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
             if (c->getName() == name) {
-                bool escaped = c->simulateEscape(securityLevel);
+                const bool escaped = c->simulateEscape(securityLevel);
                 std::cout << (escaped ? "ESCAPED!" : "Contained.") << "\n";
                 return;
             }
@@ -118,7 +120,7 @@ void BatComputer::simulateEscape(const std::string& name, double securityLevel) 
 
 void BatComputer::showCriminalIntel(const std::string& name) const {
     for (const auto& e : database) {
-        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
             if (c->getName() == name) {
                 const auto& intel = c->getIntel();
                 std::cout << "\nIntel report for " << c->getName() << ":\n";
@@ -181,7 +183,7 @@ void BatComputer::addNewFamilyMember() {
         skills.push_back(s);
     }
 
-    auto newFam = std::make_shared<Family>(code, civil, power, skills);
+    const auto newFam = std::make_shared<Family>(code, civil, power, skills);
     database.push_back(newFam);
     std::cout << "[SUCCESS] " << code << " added to Bat-Family files.\n";
 }
@@ -210,38 +212,45 @@ void BatComputer::addNewBatsuitPart() {
     }
     std::cin.ignore(1000, '\n');
 
-    auto newPart = std::make_shared<Batsuit>(level, partName, integrity);
+    const auto newPart = std::make_shared<Batsuit>(level, partName, integrity);
     database.push_back(newPart);
 
     std::cout << "[SUCCESS] " << partName << " has been equipped to the Batsuit loadout.\n";
 }
 
-void BatComputer::simulateArkhamBlackout(double systemSecurity) {
+void BatComputer::simulateArkhamBlackout(const double systemSecurity) {
     Criminal::simulateArkhamBlackout(this->database, systemSecurity);
 }
 
-void BatComputer::batcaveMaintenance(){
+void BatComputer::batcaveMaintenance() const
+{
     Family::coordinateRepairs(this->database);
 }
 
-void BatComputer::generateCrimeReport() {
+void BatComputer::generateCrimeReport() const
+{
     Criminal::generateStrategicReport(this->database);
 }
 
-void BatComputer::runSiege() {
+void BatComputer::runSiege() const
+{
     Family::simulateSiege(this->database);
 }
 
-void BatComputer::runForensics() {
+void BatComputer::runForensics() const
+{
     Criminal::runForensics(this->database);
 }
-void BatComputer::runTraining(const std::string& name) {
+void BatComputer::runTraining(const std::string& name) const
+{
     Family::runTrainingDay(this->database, name);
 }
-void BatComputer::runSuitRebalance() {
+void BatComputer::runSuitRebalance() const
+{
     Batsuit::redistributeIntegrity(this->database);
 }
 
-void BatComputer::checkSurvival(const std::string& enemy) {
+void BatComputer::checkSurvival(const std::string& enemy) const
+{
     Batsuit::calculateSurvivalOdds(this->database, enemy);
 }

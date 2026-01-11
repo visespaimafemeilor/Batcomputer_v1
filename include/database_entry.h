@@ -20,13 +20,16 @@ public:
     [[nodiscard]] virtual double assessThreat() const = 0;
 
     // polymorphic I/O and summary
-    [[nodiscard]] virtual std::string type() const { return std::string("DatabaseEntry"); }
+    [[nodiscard]] virtual std::string type() const { return "DatabaseEntry"; }
     [[nodiscard]] virtual std::string summary() const { return name; }
     virtual bool load(std::istream& in) { (void)in; return false; }
     virtual void save(std::ostream& out) const { out << name << "\n"; }
 
 
-    virtual std::string interact(DatabaseEntry& other) { (void)other; return std::string("No interaction available"); }
+    virtual std::string interact(DatabaseEntry& other) {
+        (void)other;
+        return {"No interaction available"};
+    }
 
     // virtual copy
     [[nodiscard]] virtual std::unique_ptr<DatabaseEntry> clone() const = 0;

@@ -7,7 +7,7 @@
 
 int Batsuit::suitPartCount = 0;
 
-Batsuit::Batsuit(int level_, std::string part_, double integrity_)
+Batsuit::Batsuit(const int level_, std::string part_, const double integrity_)
     : DatabaseEntry(std::move(part_)), level(level_), integrity(integrity_)
 {
     normalize();
@@ -49,7 +49,7 @@ void Batsuit::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
     bool found = false;
 
     for (const auto& e : db) {
-        if (auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
+        if (const auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
             std::cout << b->statusReport() << "\n";
             found = true;
         }
@@ -88,7 +88,7 @@ std::ostream& operator<<(std::ostream& os, const Batsuit& bs) {
 [[nodiscard]] double Batsuit::getIntegrity() const { return integrity; }
 
 bool Batsuit::loadBatsuit(std::istream& file) {
-    if(!(std::getline(file, name))) return false;
+    if(!std::getline(file, name)) return false;
     if(!(file >> level)) return false;
     file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     if(!(file >> integrity)) return false;
@@ -97,8 +97,8 @@ bool Batsuit::loadBatsuit(std::istream& file) {
     return true;
 }
 
-[[nodiscard]] bool Batsuit::isCritical(double threshold) const {
-    return integrity < threshold;
+[[nodiscard]] bool Batsuit::isCritical(const double muchie) const {
+    return integrity < muchie;
 }
 
 [[nodiscard]] std::string Batsuit::statusReport() const {
@@ -108,7 +108,7 @@ bool Batsuit::loadBatsuit(std::istream& file) {
     return ss.str();
 }
 
-void Batsuit::applyBattleDamage(double damageBad) {
+void Batsuit::applyBattleDamage(const double damageBad) {
     integrity -= static_cast<double>(damageBad);
     if(integrity < 0.0) integrity = 0.0;
 }
@@ -158,7 +158,7 @@ void Batsuit::calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEn
 
     // 1. Gasim inamicul
     for (const auto& e : database) {
-        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
             if (c->getName() == enemyName) {
                 enemyThreat = c->calculateThreatLevel();
                 break;
@@ -168,7 +168,7 @@ void Batsuit::calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEn
 
     // 2. Calculăm parametrii costumului
     for (const auto& e : database) {
-        if (auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
+        if (const auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
             techSum += b->getLevel();
             // Folosim media armonică pentru a penaliza sever dacă o singură piesă e aproape de 0
             harmonicIntegritySum += 1.0 / (b->getIntegrity() + 1.0);
@@ -181,10 +181,10 @@ void Batsuit::calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEn
         return;
     }
 
-    double avgTech = techSum / count;
-    double suitHealth = count / harmonicIntegritySum;
+    const double avgTech = techSum / count;
+    const double suitHealth = count / harmonicIntegritySum;
 
-    double winChance = (suitHealth * (avgTech / 10.0)) / (enemyThreat / 50.0);
+    double winChance = suitHealth * (avgTech / 10.0) / (enemyThreat / 50.0);
     if (winChance > 100.0) winChance = 100.0;
 
     std::cout << "\n--- COMBAT PROBABILITY REPORT ---\n";
