@@ -49,15 +49,20 @@ include(cmake/CopyHelper.cmake)
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
-        criminals.cpp
-        criminals.h
-        family.cpp
-        family.h
-        batsuit.cpp
-        batsuit.h
-        database_entry.cpp
+        src/main.cpp
+        src/database_entry.cpp
+        include/database_entry.h
+        src/criminals.cpp
+        include/criminals.h
+        src/family.cpp
+        include/family.h
+        src/batsuit.cpp
+        include/batsuit.h
 )
+
+# Add include directory so compiler can find headers in include/
+# This fixes errors like: fatal error: criminals.h: No such file or directory
+target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 # NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
