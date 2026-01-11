@@ -1,11 +1,11 @@
 //criminals.cpp
-#include "../include/criminals/criminals.h"
+#include "../../include/criminals/criminals.h"
 #include "family.h"
 #include "batsuit.h"
-#include "../include/criminals/hacker.h"
-#include "../include/criminals/crimeLord.h"
-#include "../include/criminals/bank_robber.h"
-#include "../include/criminals/metahuman.h"
+#include "../../include/criminals/hacker.h"
+#include "../../include/criminals/crimeLord.h"
+#include "../../include/criminals/bank_robber.h"
+#include "../../include/criminals/metahuman.h"
 #include <memory>
 #include <utility>
 #include <iostream>

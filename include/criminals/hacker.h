@@ -1,28 +1,21 @@
 #ifndef HACKER_H
 #define HACKER_H
+
 #include "criminals.h"
+#include <vector>
+#include <memory>
 
 class Hacker final : public Criminal {
 protected:
     int bypassLevel;
 public:
-    explicit Hacker(const int id_ = 0, const std::string& name_ = "", const int rank_ = 1, const int bypass_ = 5)
-        : Criminal(id_, name_, rank_, {}, CriminalType::HACKER), bypassLevel(bypass_) {}
+    explicit Hacker(int id_ = 0, const std::string& name_ = "", int rank_ = 1, int bypass_ = 5);
 
-    void hackSystem() const
-    {
-        std::cout << name << " is bypassing security with level " << bypassLevel << "!\n";
-    }
+    void hackSystem(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const;
 
-    [[nodiscard]] double calculateThreatLevel() const override {
-        return Criminal::calculateThreatLevel() + bypassLevel * 5;
-    }
-
-    [[nodiscard]] std::string type() const override { return "Hacker"; }
-
-    void save(std::ostream& out) const override {
-        Criminal::save(out);
-        out << bypassLevel << "\n";
-    }
+    [[nodiscard]] double calculateThreatLevel() const override;
+    [[nodiscard]] std::string type() const override;
+    void save(std::ostream& out) const override;
 };
+
 #endif

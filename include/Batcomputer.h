@@ -37,6 +37,8 @@ public:
     void runTraining(const std::string& name) const;
     void runSuitRebalance() const;
     void checkSurvival(const std::string& enemy) const;
+    void runGlobalCyberDefense() const;
+    void runUnderworldSting() const;
 };
 
 #endif

@@ -34,7 +34,7 @@ public:
     // virtual copy
     [[nodiscard]] virtual std::unique_ptr<DatabaseEntry> clone() const = 0;
 
-    static int getTotalEntities() { return totalEntities; }
+    [[maybe_unused]] static int getTotalEntities() { return totalEntities; }
 
     static std::shared_ptr<DatabaseEntry> createFromStream(std::istream& in);
 };

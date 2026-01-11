@@ -254,3 +254,37 @@ void BatComputer::checkSurvival(const std::string& enemy) const
 {
     Batsuit::calculateSurvivalOdds(this->database, enemy);
 }
+
+void BatComputer::runGlobalCyberDefense() const
+{
+    std::cout << "\n[SYSTEM] SCANNING FOR ACTIVE CYBER THREATS...\n";
+    bool threatFound = false;
+
+    for (auto& entry : database) {
+        if (const auto hacker = std::dynamic_pointer_cast<Hacker>(entry)) {
+            hacker->hackSystem(this->database);
+            threatFound = true;
+        }
+    }
+
+    if (!threatFound) {
+        std::cout << "[SUCCESS] No active hackers detected. Bat-Network is stable.\n";
+    }
+}
+
+void BatComputer::runUnderworldSting() const
+{
+    std::cout << "\n[SYSTEM] MONITORING CRIME LORD INFLUENCE...\n";
+    bool bossFound = false;
+
+    for (auto& entry : database) {
+        if (const auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
+            lord->inspireThugs(this->database);
+            bossFound = true;
+        }
+    }
+
+    if (!bossFound) {
+        std::cout << "[INFO] No major crime lords are currently rallying troops.\n";
+    }
+}

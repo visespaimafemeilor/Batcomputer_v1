@@ -39,7 +39,7 @@ public:
     [[nodiscard]] int getPhysicalPower() const;
     [[nodiscard]] const std::vector<std::string>& getSkills() const;
 
-    static int getFamilyMemberCount() { return familyMemberCount; }
+    [[maybe_unused]] static int getFamilyMemberCount() { return familyMemberCount; }
 
     bool loadFamilyMember(std::istream& file);
 

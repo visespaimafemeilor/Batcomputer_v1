@@ -4,16 +4,11 @@
 #include "batcomputer.h"
 #include "exceptions.h"
 
-// --- PROTOTIPURI SUB-MENIURI ---
 void handleDatabaseMenu(const BatComputer& bc);
 void handleOperationsMenu(BatComputer& bc);
 void handleBatCaveMenu(const BatComputer& bc);
 void handleAdminMenu(BatComputer& bc);
 
-// --- FUNCTII UTILS ---
-void clearScreen() {
-    std::cout << std::string(5, '\n');
-}
 
 int main() {
     BatComputer bc;
@@ -115,6 +110,8 @@ void handleOperationsMenu(BatComputer& bc) {
         std::cout << "5) Interactive Entry Hook (Polymorphic Interaction)\n";
         std::cout << "6) Simulate Gotham Siege\n";
         std::cout << "7) Run Forensics Analysis\n";
+        std::cout << "8) Cyber Defense (Scan for Hackers)\n";
+        std::cout << "9) Underworld Surveillance (Scan for Crime Lords)\n";
         std::cout << "0) BACK TO MAIN MENU\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -150,6 +147,12 @@ void handleOperationsMenu(BatComputer& bc) {
             case 7: {
                 bc.runForensics(); break;
             }
+            case 8:
+                bc.runGlobalCyberDefense();
+                break;
+            case 9:
+                bc.runUnderworldSting();
+                break;
             case 0:
                 std::cout << "Returning to previous menu...\n";
                 break;
