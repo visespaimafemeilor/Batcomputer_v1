@@ -256,3 +256,15 @@ void BatComputer::addNewBatsuitPart() {
 
     std::cout << "[SUCCESS] " << partName << " has been equipped to the Batsuit loadout.\n";
 }
+
+void BatComputer::simulateArkhamBlackout(double systemSecurity) {
+    Criminal::simulateArkhamBlackout(this->database, systemSecurity);
+}
+
+void BatComputer::batcaveMaintenance() {
+    Family::coordinateRepairs(this->database);
+}
+
+void BatComputer::generateCrimeReport() {
+    Criminal::generateStrategicReport(this->database);
+}

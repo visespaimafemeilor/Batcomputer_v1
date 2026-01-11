@@ -28,7 +28,10 @@ public:
     void showCriminalIntel(const std::string& name) const;
     void addNewCriminal();
     void addNewFamilyMember();
-    void addNewBatsuitPart();
+    void addNewBatsuitPart();\
+    void simulateArkhamBlackout(double systemSecurity);
+    void batcaveMaintenance();
+    void generateCrimeReport();
 };
 
 #endif

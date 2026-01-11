@@ -85,32 +85,6 @@ bool Criminal::load(std::istream& in) {
     }
     return true;
 }
-/*
-bool Criminal::loadCriminal(std::istream& file)
-{
-    if(!(file >> id))
-        return false;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    if(!getline(file, name))
-        return false;
-    if(!(file >> rank))
-        return false;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    int intelCount;
-    if(!(file >> intelCount))
-        return false;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    intel.clear();
-    for(int i = 0; i < intelCount; ++i)
-    {
-        std::string line;
-        if(!getline(file, line))
-            return false;
-        intel.push_back(line);
-    }
-    return true;
-}
-*/
 
 void Criminal::promote(int inc){
     rank += inc;
@@ -179,25 +153,103 @@ bool Criminal::simulateEscape(double facilitySecurityLevel) const{
     return randomValue < escapeChance;
 }
 
-// interaction implementation
 std::string Criminal::interact(DatabaseEntry& other) {
-    // Try dynamic cast to Family
     if(auto* fam = dynamic_cast<Family*>(&other)){
         if(!intel.empty()){
             std::string stolen = intel.back();
-            // note: Criminal::intel is private; we mutate here for demo purposes
-            // we'll remove last intel and report stealing
-            // Since method is const in other places, here we allow changing criminal state
-            // by casting away constness is not necessary; this method is non-const
             intel.pop_back();
             return name + " stole intel '" + stolen + "' from " + fam->getCodename();
         } else {
             return name + " tried to steal from " + fam->getCodename() + " but had no intel to trade.";
         }
     }
-    // Interact with Batsuit: simple inspect
     if(auto* bs = dynamic_cast<Batsuit*>(&other)){
         return name + " inspects suit part '" + bs->getPart() + "' (integrity: " + std::to_string(bs->getIntegrity()) + ")";
     }
     return name + " has no special interaction with " + other.type();
+}
+
+void Criminal::simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>>& database, double systemSecurity) {
+    std::cout << "\n!!! [ALARM] ARCHAM ASYLUM SYSTEM BREACH DETECTED !!!\n";
+
+    // Pasul 1: Verificam influenta liderilor
+    double finalSecurity = systemSecurity;
+    for (const auto& entry : database) {
+        if (auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
+            finalSecurity -= 15.0; // Un Crime Lord scade securitatea cu 15 unitati
+            std::cout << "[!] Crime Lord " << lord->getName() << " is coordinating the riots!\n";
+        }
+    }
+
+    // Pasul 2: Simulam evadarea
+    auto it = database.begin();
+    int escapeCount = 0;
+
+    while (it != database.end()) {
+        if (auto c = std::dynamic_pointer_cast<Criminal>(*it)) {
+            if (c->simulateEscape(finalSecurity)) {
+                std::cout << "[OUTBREAK] " << c->getName() << " (Rank " << c->getRank() << ") has escaped!\n";
+                it = database.erase(it); // il stergem din baza de date (a fugit)
+                escapeCount++;
+                continue;
+            }
+        }
+        ++it;
+    }
+
+    std::cout << "\n[REPORT] Outbreak contained. Total escaped: " << escapeCount << "\n";
+    if (escapeCount > 0) std::cout << "[WARNING] Gotham PD warns citizens to stay indoors.\n";
+}
+
+void Criminal::generateStrategicReport(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
+    double totalCriminalThreat = 0;
+    double totalFamilyDefense = 0;
+    int hackerCount = 0;
+    bool oraclePresent = false;
+    int brokenParts = 0;
+
+    std::cout << "\n--- [BAT-COMPUTER STRATEGIC ANALYSIS] ---\n";
+
+    for (const auto& entry : database) {
+        // 1. Analizăm Amenințarea (Criminali)
+        if (auto c = std::dynamic_pointer_cast<Criminal>(entry)) {
+            totalCriminalThreat += c->calculateThreatLevel();
+            if (std::dynamic_pointer_cast<Hacker>(entry)) hackerCount++;
+        }
+        // 2. Analizăm Defensia (Familie)
+        else if (auto f = std::dynamic_pointer_cast<Family>(entry)) {
+            totalFamilyDefense += f->getPhysicalPower();
+            if (f->getName() == "Oracle") oraclePresent = true;
+        }
+        // 3. Analizăm Resursele (Batsuit)
+        else if (auto b = std::dynamic_pointer_cast<Batsuit>(entry)) {
+            if (b->getIntegrity() < 50.0) brokenParts++;
+        }
+    }
+
+    // --- LOGICA DE CALCUL A RISCULUI ---
+
+    // Riscul crește dacă avem mulți Hackeri și nu avem Oracle pentru contramăsuri
+    if (hackerCount > 0 && !oraclePresent) {
+        totalCriminalThreat *= 1.3;
+        std::cout << "[!] WARNING: Digital vulnerability detected. Hackers are unmonitored!\n";
+    }
+
+    // Riscul crește dacă Batman are costumul distrus
+    if (brokenParts > 2) {
+        totalFamilyDefense *= 0.8;
+        std::cout << "[!] WARNING: Batsuit integrity is compromised. Frontline efficiency lowered.\n";
+    }
+
+    std::cout << "\nGlobal Threat Level: " << totalCriminalThreat << "\n";
+    std::cout << "Global Defense Level: " << totalFamilyDefense << "\n";
+
+    // --- CONCLUZIA ---
+    double ratio = totalCriminalThreat / (totalFamilyDefense + 1.0); // +1 pentru a evita împărțirea la 0
+
+    std::cout << "STATUS: ";
+    if (ratio < 0.5) std::cout << "GOTHAM IS SECURE. Batman has the situation under control.\n";
+    else if (ratio < 1.2) std::cout << "EQUILIBRIUM. Constant vigilance required.\n";
+    else if (ratio < 2.0) std::cout << "DANGER. Criminal activity outpaces response capabilities!\n";
+    else std::cout << "CRITICAL. Gotham is falling. Call the Justice League.\n";
 }

@@ -1,0 +1,80 @@
+12
+100
+Nightwing
+Dick Grayson
+95
+3
+Exceptional acrobat.
+Martial arts.
+Born leader.
+100
+Oracle
+Barbara Gordon
+40
+3
+Hacker genius.
+Complete control over Gotham's networks.
+Strategy analyst.
+100
+Red Robin
+Tim Drake
+70
+3
+World's second-best detective.
+Expert in technology and surveillance.
+Capable of logically anticipating the enemy's next move.
+0
+1
+Joker
+10
+4
+Expert chemist specializing in toxic gases and explosives.
+Psychological warfare strategist, unpredictable behavior.
+Connection to underground clown-themed gang.
+Known to set elaborate traps for Batman.
+0
+2
+Black Mask
+8
+4
+Controls major sections of Gotham’s organized crime.
+Known for brutal enforcement and torture methods.
+Operates out of Janus Cosmetics ruins.
+Maintains influence over corrupt politicians and GCPD officers.
+0
+3
+Penguin
+6
+4
+Owner of the Iceberg Lounge, fronts as a businessman.
+Arms dealer with widespread black market connections.
+Employs elite mercenaries and intelligence brokers.
+Obsessive collector of rare birds, uses them as coded messages.
+200
+Armored Cowl
+3
+92.5
+200
+Reinforced Gauntlets
+4
+87
+200
+Chestplate
+5
+78.4
+200
+Cape with Memory Fabric
+2
+65
+200
+Utility Belt (Advanced Loadout)
+6
+95.2
+100
+Robin
+Damien Wayne
+60
+3
+Martial arts.
+Sword fighting.
+Individualistic and stubborn.

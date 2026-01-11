@@ -1,4 +1,5 @@
 #include "family.h"
+#include "batsuit.h"
 #include <algorithm>
 #include <limits>
 #include <iostream>
@@ -99,9 +100,46 @@ std::string Family::simulateBattle(const Criminal& enemy) const {
 
 std::string Family::interact(DatabaseEntry& other) {
     if(auto* cr = dynamic_cast<Criminal*>(&other)){
-        bool win = fight(*cr);
-        if(win) return name + " confronts " + cr->getName() + " and wins!";
+        if(fight(*cr)) return name + " confronts " + cr->getName() + " and wins!";
         else return name + " confronts " + cr->getName() + " and loses.";
     }
     return name + " has no special interaction with " + other.type();
+}
+
+void Family::coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
+    bool oraclePresent = false;
+    double repairPower = 15.0;
+
+    // Pasul 1: Verificam dacă Oracle este in baza de date
+    for (const auto& entry : database) {
+        if (auto f = std::dynamic_pointer_cast<Family>(entry)) {
+            if (f->getName() == "Oracle") {
+                oraclePresent = true;
+                repairPower = 40.0; // Dacă Oracle ajuta, reparatiile sunt mult mai bune
+                std::cout << "[SYSTEM] Oracle is remote-linking to the Batcave. Repair efficiency at maximum!\n";
+                break;
+            }
+        }
+    }
+
+    if (!oraclePresent) {
+        std::cout << "[WARNING] Oracle not online. Using automated backup systems (Low Efficiency).\n";
+    }
+
+    // Pasul 2: Reparam piesele
+    int repairedCount = 0;
+    for (auto& entry : database) {
+        if (auto suitPart = std::dynamic_pointer_cast<Batsuit>(entry)) {
+            suitPart->applyBattleDamage(static_cast<int>(-repairPower));
+            std::cout << "[FIXED] " << suitPart->getName()
+                      << " restored to " << suitPart->getIntegrity() << "%\n";
+            repairedCount++;
+        }
+    }
+
+    if (repairedCount == 0) {
+        std::cout << "[INFO] No Batsuit components found in database to repair.\n";
+    } else {
+        std::cout << "[COMPLETE] Maintenance finished for " << repairedCount << " components.\n";
+    }
 }

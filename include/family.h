@@ -51,6 +51,7 @@ public:
 
     // interactions with other database entries
     std::string interact(DatabaseEntry& other) override;
+    static void coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
 };
 
 #endif // FAMILY_H

@@ -23,7 +23,6 @@ protected:
 public:
     static int criminalCount;
 
-    // constructor declaration (defined in src/criminals.cpp)
     explicit Criminal(int id_ = 0, std::string name_ = "", int rank_ = 1, const std::vector<std::string>& intel_ = {}, CriminalType cat = CriminalType::GENERIC);
     ~Criminal() override;
 
@@ -40,16 +39,13 @@ public:
     virtual double calculateThreatLevel() const;
     void displayInfo() const override;
 
-    // DatabaseEntry overrides
     double assessThreat() const override;
     std::unique_ptr<DatabaseEntry> clone() const override;
 
-    // copy semantics
     Criminal(const Criminal& other);
     Criminal& operator=(Criminal other);
     friend void swap(Criminal& a, Criminal& b) noexcept;
 
-    // polymorphic I/O
     std::string type() const override;
     std::string summary() const override;
     bool load(std::istream& in) override;
@@ -57,11 +53,14 @@ public:
 
     bool simulateEscape(double facilitySecurityLevel) const;
 
-    // specialty: specialization hook for derived criminals
     virtual std::string specialty() const { return std::string(); }
 
-    // interaction - override to implement domain-specific interactions
     std::string interact(DatabaseEntry& other) override;
+
+    static void simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>>& database, double systemSecurity);
+
+    static void generateStrategicReport(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
+
 };
 
 #endif // CRIMINALS_H

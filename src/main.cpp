@@ -4,123 +4,181 @@
 #include "batcomputer.h"
 #include "exceptions.h"
 
-void displayMenu() {
-    std::cout << "\n==========================\n";
-    std::cout << "        BAT-COMPUTER      \n";
-    std::cout << "==========================\n";
-    std::cout << "1) Show Criminal Database\n";
-    std::cout << "2) Show Bat-Family Members\n";
-    std::cout << "3) Show Batsuit Loadout\n";
-    std::cout << "4) Show Criminal Intel\n";
-    std::cout << "5) Search Criminal by Name\n";
-    std::cout << "7) Simulate Battle (Family vs Criminal)\n";
-    std::cout << "9) Promote Criminal & Show Threat\n";
-    std::cout << "10) Simulate Escape Attempt\n";
-    std::cout << "11) Show Database Polymorphically\n";
-    std::cout << "14) Interact Two Entries (Indices)\n";
-    std::cout << "15) Add New Criminal\n";
-    std::cout << "16) Add New Family Member\n";
-    std::cout << "17) Add New Batsuit Component\n";
-    std::cout << "0) Exit & Save\n";
-    std::cout << "--------------------------\n";
-    std::cout << "Enter choice: ";
+// --- PROTOTIPURI SUB-MENIURI ---
+void handleDatabaseMenu(BatComputer& bc);
+void handleOperationsMenu(BatComputer& bc);
+void handleBatCaveMenu(BatComputer& bc);
+void handleAdminMenu(BatComputer& bc);
+
+// --- FUNCTII UTILS ---
+void clearScreen() {
+    std::cout << std::string(5, '\n');
 }
 
 int main() {
     BatComputer bc;
 
     try {
-        std::cout << "Welcome, Dark Knight. Initializing systems...\n";
+        std::cout << "Welcome, Dark Knight. Initializing Bat-Computer...\n";
         bc.loadDatabase();
     } catch (const BatcomputerException& e) {
-        std::cerr << "Initialization warning: " << e.what() << "\n";
-        std::cout << "Starting with a clean database.\n";
+        std::cerr << "Initialization error: " << e.what() << "\n";
     }
 
-    int choice = -1;
-    std::string inputBuffer;
+    int mainChoice = -1;
+    while (mainChoice != 0) {
+        std::cout << "\n====================================\n";
+        std::cout << "      BAT-COMPUTER: MAIN TERMINAL   \n";
+        std::cout << "====================================\n";
+        std::cout << "1) [DATABASE]   - View, Search & Intel\n";
+        std::cout << "2) [OPERATIONS] - Battles & Simulations\n";
+        std::cout << "3) [BAT-CAVE]   - Maintenance & Suits\n";
+        std::cout << "4) [ADMIN]      - Add New Records\n";
+        std::cout << "0) [EXIT]       - Save & Shut Down\n";
+        std::cout << "------------------------------------\n";
+        std::cout << "Selection: ";
 
-    while (choice != 0) {
-        displayMenu();
-
-        if (!(std::cin >> choice)) {
+        if (!(std::cin >> mainChoice)) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Please enter a number.\n";
             continue;
         }
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        try {
-            switch (choice) {
-                case 1: bc.showAllCriminals(); break;
-                case 2: bc.showBatFamily(); break;
-                case 3: bc.showBatsuit(); break;
-
-                case 4: {
-                    std::cout << "Enter criminal name: ";
-                    std::getline(std::cin, inputBuffer);
-                    bc.showCriminalIntel(inputBuffer);
-                    break;
-                }
-
-                case 5: {
-                    std::cout << "Search name: ";
-                    std::getline(std::cin, inputBuffer);
-                    bc.searchCriminal(inputBuffer);
-                    break;
-                }
-
-                case 7: {
-                    std::string famName, crimName;
-                    std::cout << "Family Member Codename: "; std::getline(std::cin, famName);
-                    std::cout << "Criminal Name: "; std::getline(std::cin, crimName);
-                    bc.simulateBattle(famName, crimName);
-                    break;
-                }
-
-                case 9: {
-                    std::cout << "Promote criminal name: ";
-                    std::getline(std::cin, inputBuffer);
-                    bc.promoteCriminal(inputBuffer);
-                    break;
-                }
-
-                case 10: {
-                    std::cout << "Criminal name: "; std::getline(std::cin, inputBuffer);
-                    double sec;
-                    std::cout << "Security Level (1-10): "; std::cin >> sec;
-                    bc.simulateEscape(inputBuffer, sec);
-                    break;
-                }
-
-                case 11: bc.showPolymorphicDatabase(); break;
-
-                case 14: {
-                    int i1, i2;
-                    bc.showPolymorphicDatabase(); // Arătăm indicii
-                    std::cout << "Select first index: "; std::cin >> i1;
-                    std::cout << "Select second index: "; std::cin >> i2;
-                    bc.performInteraction(i1, i2);
-                    break;
-                }
-
-                case 15: bc.addNewCriminal(); break;
-                case 16: bc.addNewFamilyMember(); break;
-                case 17: bc.addNewBatsuitPart(); break;
-
-                case 0:
+        switch (mainChoice) {
+            case 1: handleDatabaseMenu(bc); break;
+            case 2: handleOperationsMenu(bc); break;
+            case 3: handleBatCaveMenu(bc); break;
+            case 4: handleAdminMenu(bc); break;
+            case 0:
+                try {
                     bc.saveDatabase();
-                    std::cout << "Exiting Bat-Computer... Stay vigilant, Batman.\n";
-                    break;
-
-                default:
-                    std::cout << "Unknown command. Access denied.\n";
-            }
-        } catch (const BatcomputerException& e) {
-            std::cerr << "\n[DATABASE ERROR] " << e.what() << "\n";
+                } catch (const std::exception& e) {
+                    std::cerr << "Save failed: " << e.what() << "\n";
+                }
+                std::cout << "Stay vigilant. Gotham still needs you.\n";
+                break;
+            default:
+                std::cout << "Invalid access code.\n";
         }
     }
-
     return 0;
+}
+
+// ==========================================
+//          IMPLEMENTARE SUB-MENIURI
+// ==========================================
+
+void handleDatabaseMenu(BatComputer& bc) {
+    int choice = -1;
+    std::string buffer;
+    while (choice != 0) {
+        std::cout << "\n--- [DATABASE TERMINAL] ---\n";
+        std::cout << "1) Show All Criminals\n";
+        std::cout << "2) Show Bat-Family Members\n";
+        std::cout << "3) Search Criminal by Name\n";
+        std::cout << "4) Show Criminal Intel\n";
+        std::cout << "5) Polymorphic Overview (All Entries)\n";
+        std::cout << "0) BACK TO MAIN MENU\n";
+        std::cout << "Choice: ";
+        std::cin >> choice;
+        std::cin.ignore(1000, '\n');
+
+        switch (choice) {
+            case 1: bc.showAllCriminals(); break;
+            case 2: bc.showBatFamily(); break;
+            case 3:
+                std::cout << "Enter name: "; std::getline(std::cin, buffer);
+                bc.searchCriminal(buffer); break;
+            case 4:
+                std::cout << "Enter name: "; std::getline(std::cin, buffer);
+                bc.showCriminalIntel(buffer); break;
+            case 5: bc.showPolymorphicDatabase(); break;
+        }
+    }
+}
+
+void handleOperationsMenu(BatComputer& bc) {
+    int choice = -1;
+    while (choice != 0) {
+        std::cout << "\n--- [OPERATIONS & TACTICS] ---\n";
+        std::cout << "1) 1vs1 Battle Simulation\n";
+        std::cout << "2) Arkham Blackout (Mass Escape Simulation)\n";
+        std::cout << "3) Generate Strategic Crime Report\n";
+        std::cout << "4) Simulate Escape Attempt (Single)\n";
+        std::cout << "5) Interactive Entry Hook (Polymorphic Interaction)\n";
+        std::cout << "0) BACK TO MAIN MENU\n";
+        std::cout << "Choice: ";
+        std::cin >> choice;
+        std::cin.ignore(1000, '\n');
+
+        switch (choice) {
+            case 1: {
+                std::string fam, crim;
+                std::cout << "Family Member: "; std::getline(std::cin, fam);
+                std::cout << "Criminal: "; std::getline(std::cin, crim);
+                bc.simulateBattle(fam, crim); break;
+            }
+            case 2: {
+                double sec; std::cout << "Security Level (1-100): "; std::cin >> sec;
+                bc.simulateArkhamBlackout(sec); break;
+            }
+            case 3: bc.generateCrimeReport(); break;
+            case 4: {
+                std::string n; std::cout << "Criminal Name: "; std::getline(std::cin, n);
+                double s; std::cout << "Facility Security (1-10): "; std::cin >> s;
+                bc.simulateEscape(n, s); break;
+            }
+            case 5: {
+                int i1, i2;
+                bc.showPolymorphicDatabase();
+                std::cout << "Index 1: "; std::cin >> i1;
+                std::cout << "Index 2: "; std::cin >> i2;
+                bc.performInteraction(i1, i2); break;
+            }
+        }
+    }
+}
+
+void handleBatCaveMenu(BatComputer& bc) {
+    int choice = -1;
+    while (choice != 0) {
+        std::cout << "\n--- [BAT-CAVE SYSTEMS] ---\n";
+        std::cout << "1) Show Batsuit Status\n";
+        std::cout << "2) Run Maintenance\n";
+        std::cout << "0) BACK TO MAIN MENU\n";
+        std::cout << "Choice: ";
+        std::cin >> choice;
+        std::cin.ignore(1000, '\n');
+
+        switch (choice) {
+            case 1: bc.showBatsuit(); break;
+            case 2: bc.batcaveMaintenance(); break;
+        }
+    }
+}
+
+void handleAdminMenu(BatComputer& bc) {
+    int choice = -1;
+    while (choice != 0) {
+        std::cout << "\n--- [ADMINISTRATIVE ACCESS] ---\n";
+        std::cout << "1) Add New Criminal\n";
+        std::cout << "2) Add New Family Member\n";
+        std::cout << "3) Add New Batsuit Part\n";
+        std::cout << "4) Promote Existing Criminal\n";
+        std::cout << "0) BACK TO MAIN MENU\n";
+        std::cout << "Choice: ";
+        std::cin >> choice;
+        std::cin.ignore(1000, '\n');
+
+        switch (choice) {
+            case 1: bc.addNewCriminal(); break;
+            case 2: bc.addNewFamilyMember(); break;
+            case 3: bc.addNewBatsuitPart(); break;
+            case 4: {
+                std::string n; std::cout << "Name: "; std::getline(std::cin, n);
+                bc.promoteCriminal(n); break;
+            }
+        }
+    }
 }
