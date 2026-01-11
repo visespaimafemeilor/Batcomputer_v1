@@ -59,8 +59,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         src/batsuit.cpp
         include/batsuit.h
         include/criminals/metahuman.h
-        include/Batcomputer.h
-        src/Batcomputer.cpp
+        include/batcomputer.h
+        src/batcomputer.cpp
         src/criminals/hacker.cpp
         include/criminals/hacker.h
         src/criminals/crimeLord.cpp
