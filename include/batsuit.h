@@ -5,11 +5,9 @@
 #include "database_entry.h"
 #include <iostream>
 #include <string>
-#include <utility>
-#include <limits>
 #include <vector>
 
-class Batsuit : public DatabaseEntry{
+class Batsuit final : public DatabaseEntry{
 protected:
     int level;
     //std::string part;
@@ -28,12 +26,12 @@ public:
         std::cout<<"-- SUIT COMPONENT: "<< name<<" (Integrity: "<<integrity<<"%) --\n";
     }
 
-    double assessThreat() const override;
-    std::unique_ptr<DatabaseEntry> clone() const override;
+    [[nodiscard]] double assessThreat() const override;
+    [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;
 
     // DatabaseEntry interface
-    std::string type() const override;
-    std::string summary() const override;
+    [[nodiscard]] std::string type() const override;
+    [[nodiscard]] std::string summary() const override;
     bool load(std::istream& in) override;
     void save(std::ostream& out) const override;
     static void showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db);
@@ -56,7 +54,7 @@ public:
     void applyBattleDamage(double damageBad);
 
     std::string interact(DatabaseEntry& other) override;
-    static void redistributeIntegrity(std::vector<std::shared_ptr<DatabaseEntry>>& database);
+    static void redistributeIntegrity(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
     static void calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& enemyName);
 };
 

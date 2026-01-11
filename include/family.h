@@ -4,10 +4,9 @@
 #include "database_entry.h"
 #include <string>
 #include <vector>
-#include <iostream>
 #include "criminals/criminals.h"
 
-class Family : public DatabaseEntry {
+class Family final : public DatabaseEntry {
 protected:
     std::string civilian_name;
     int physical_power;
@@ -25,18 +24,16 @@ public:
     friend void swap(Family& a, Family& b) noexcept;
     Family& operator=(Family other);
 
-    std::unique_ptr<DatabaseEntry> clone() const override;
+    [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;
 
-    // DatabaseEntry implementations
     void displayInfo() const override;
-    double assessThreat() const override;
-    std::string type() const override;
-    std::string summary() const override;
+    [[nodiscard]] double assessThreat() const override;
+    [[nodiscard]] std::string type() const override;
+    [[nodiscard]] std::string summary() const override;
     bool load(std::istream& in) override;
     void save(std::ostream& out) const override;
     static void showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db);
 
-    // getters
     [[nodiscard]] const std::string& getCodename() const;
     [[nodiscard]] const std::string& getCivilianName() const;
     [[nodiscard]] int getPhysicalPower() const;
@@ -50,11 +47,10 @@ public:
     [[nodiscard]] std::string fightReport(const Criminal& enemy) const;
     [[nodiscard]] std::string simulateBattle(const Criminal& enemy) const;
 
-    // interactions with other database entries
     std::string interact(DatabaseEntry& other) override;
     static void coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
     static void simulateSiege(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
-    static void runTrainingDay(std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& memberName);
+    static void runTrainingDay(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& memberName);
 };
 
 #endif // FAMILY_H

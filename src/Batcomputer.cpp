@@ -220,7 +220,7 @@ void BatComputer::simulateArkhamBlackout(double systemSecurity) {
     Criminal::simulateArkhamBlackout(this->database, systemSecurity);
 }
 
-void BatComputer::batcaveMaintenance() {
+void BatComputer::batcaveMaintenance(){
     Family::coordinateRepairs(this->database);
 }
 

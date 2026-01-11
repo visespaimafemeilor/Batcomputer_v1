@@ -5,7 +5,7 @@
 #include "exceptions.h"
 
 // --- PROTOTIPURI SUB-MENIURI ---
-void handleDatabaseMenu(BatComputer& bc);
+void handleDatabaseMenu(const BatComputer& bc);
 void handleOperationsMenu(BatComputer& bc);
 void handleBatCaveMenu(BatComputer& bc);
 void handleAdminMenu(BatComputer& bc);
@@ -69,7 +69,7 @@ int main() {
 //          IMPLEMENTARE SUB-MENIURI
 // ==========================================
 
-void handleDatabaseMenu(BatComputer& bc) {
+void handleDatabaseMenu(const BatComputer& bc) {
     int choice = -1;
     std::string buffer;
     while (choice != 0) {
@@ -94,6 +94,12 @@ void handleDatabaseMenu(BatComputer& bc) {
                 std::cout << "Enter name: "; std::getline(std::cin, buffer);
                 bc.showCriminalIntel(buffer); break;
             case 5: bc.showPolymorphicDatabase(); break;
+            case 0:
+                std::cout << "Returning to previous menu...\n";
+                break;
+            default:
+                std::cout << "[ERROR] Invalid selection: '" << choice << "'. Please try again.\n";
+                break;
         }
     }
 }
@@ -144,6 +150,12 @@ void handleOperationsMenu(BatComputer& bc) {
             case 7: {
                 bc.runForensics(); break;
             }
+            case 0:
+                std::cout << "Returning to previous menu...\n";
+                break;
+            default:
+                std::cout << "[ERROR] Invalid selection: '" << choice << "'. Please try again.\n";
+                break;
         }
     }
 }
@@ -171,7 +183,15 @@ void handleBatCaveMenu(BatComputer& bc) {
                 std::getline(std::cin, name);
                 bc.checkSurvival(name);
                 break;
-        }
+
+            }
+            case 0:
+                std::cout << "Returning to previous menu...\n";
+                break;
+            default:
+                std::cout << "[ERROR] Invalid selection: '" << choice << "'. Please try again.\n";
+                break;
+
         }
     }
 }
@@ -204,6 +224,12 @@ void handleAdminMenu(BatComputer& bc) {
                     bc.runTraining(name);
                     break;
             }
+            case 0:
+                std::cout << "Returning to previous menu...\n";
+                break;
+            default:
+                std::cout << "[ERROR] Invalid selection: '" << choice << "'. Please try again.\n";
+                break;
         }
     }
 }

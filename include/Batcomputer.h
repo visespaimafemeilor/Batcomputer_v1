@@ -15,7 +15,7 @@ public:
     // --- GESTIUNE DATABASE ---
     void loadDatabase();
     void saveDatabase();
-    void addEntity(std::shared_ptr<DatabaseEntry> entry) { database.push_back(entry); }
+    void addEntity(const std::shared_ptr<DatabaseEntry>& entry) { database.push_back(entry); }
     void showAllCriminals() const;
     void showBatFamily() const;
     void showBatsuit() const;

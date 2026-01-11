@@ -27,6 +27,15 @@ Criminal::Criminal(int id_, std::string name_, int rank_, const std::vector<std:
 
 Criminal::~Criminal() { --criminalCount; }
 
+Criminal::Criminal(const Criminal& other)
+    : DatabaseEntry(other),
+      id(other.id),
+      rank(other.rank),
+      intel(other.intel),
+      category(other.category)
+{
+    ++criminalCount;
+}
 
 std::ostream& operator<<(std::ostream& os, const Criminal& cr)
 {
@@ -49,7 +58,7 @@ std::unique_ptr<Criminal> CriminalFactory(std::istream& in) {
     int typeInt;
     if (!(in >> typeInt)) return nullptr;
 
-    CriminalType type = static_cast<CriminalType>(typeInt);
+    const auto type = static_cast<CriminalType>(typeInt);
     std::unique_ptr<Criminal> c;
 
     switch (type) {
@@ -129,7 +138,7 @@ void Criminal::promote(int inc){
     rank += inc;
 }
 
-void Criminal::promoteByName(std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name) {
+void Criminal::promoteByName(const std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name) {
     for (auto& e : db) {
         if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
             if (c->getName() == name) {
@@ -153,9 +162,6 @@ double Criminal::calculateThreatLevel() const{
 double Criminal::assessThreat() const {
     return calculateThreatLevel();
 }
-
-Criminal::Criminal(const Criminal& other)
-    : DatabaseEntry(other), id(other.id), rank(other.rank), intel(other.intel) { ++criminalCount; }
 
 void swap(Criminal& a, Criminal& b) noexcept {
     using std::swap;

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <limits>
 
 int Batsuit::suitPartCount = 0;
 
@@ -121,7 +122,7 @@ std::string Batsuit::interact(DatabaseEntry& other) {
     return name + " has no special interaction with " + other.type();
 }
 
-void Batsuit::redistributeIntegrity(std::vector<std::shared_ptr<DatabaseEntry>>& database) {
+void Batsuit::redistributeIntegrity(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
     std::vector<std::shared_ptr<Batsuit>> parts;
     double totalIntegrity = 0;
 
@@ -134,7 +135,7 @@ void Batsuit::redistributeIntegrity(std::vector<std::shared_ptr<DatabaseEntry>>&
 
     if (parts.empty()) return;
 
-    const double average = totalIntegrity / parts.size();
+    const double average = totalIntegrity / static_cast<double>(parts.size());
     std::cout << "\n[BAT-SYSTEMS] Rebalancing Integrity. Target Average: " << average << "%\n";
 
     for (const auto& p : parts) {
@@ -155,7 +156,7 @@ void Batsuit::calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEn
     int count = 0;
     double enemyThreat = 0;
 
-    // 1. Găsim inamicul
+    // 1. Gasim inamicul
     for (const auto& e : database) {
         if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
             if (c->getName() == enemyName) {

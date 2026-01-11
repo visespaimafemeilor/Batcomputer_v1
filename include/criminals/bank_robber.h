@@ -3,26 +3,26 @@
 
 #include "criminals.h"
 
-class BankRobber : public Criminal {
+class BankRobber final : public Criminal {
 private:
     int successfulHeists;
     bool hasGetawayVehicle;
 
 public:
-    BankRobber(int id_ = 0, std::string name_ = "", int rank_ = 1,
-               int heists = 0, bool vehicle = false)
+    explicit BankRobber(const int id_ = 0, const std::string& name_ = "", const int rank_ = 1,
+               const int heists = 0, const bool vehicle = false)
         : Criminal(id_, name_, rank_, {}, CriminalType::BANK_ROBBER),
           successfulHeists(heists), hasGetawayVehicle(vehicle) {}
 
-    double calculateThreatLevel() const override {
+    [[nodiscard]] double calculateThreatLevel() const override {
         double base = Criminal::calculateThreatLevel();
         if (hasGetawayVehicle) base += 15.0; // Mai greu de prins
         return base + (successfulHeists * 2);
     }
 
-    std::string type() const override { return "Bank Robber"; }
+    [[nodiscard]] std::string type() const override { return "Bank Robber"; }
 
-    std::string specialty() const override {
+    [[nodiscard]] std::string specialty() const override {
         return "Expert in Heists. Success rate: " + std::to_string(successfulHeists);
     }
 

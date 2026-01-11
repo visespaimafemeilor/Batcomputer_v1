@@ -1,6 +1,8 @@
 #ifndef METAHUMAN_H
 #define METAHUMAN_H
 
+#include <utility>
+
 #include "criminals.h"
 
 class MetaHuman : public Criminal {
@@ -9,18 +11,18 @@ private:
     double powerScale;
 
 public:
-    MetaHuman(int id_ = 0, std::string name_ = "", int rank_ = 1, 
-              std::string source = "Unknown", double scale = 1.0)
+    explicit MetaHuman(const int id_ = 0, const std::string& name_ = "", const int rank_ = 1,
+              std::string  source = "Unknown", const double scale = 1.0)
         : Criminal(id_, name_, rank_, {}, CriminalType::METAHUMAN), 
-          powerSource(source), powerScale(scale) {}
+          powerSource(std::move(source)), powerScale(scale) {}
 
-    double calculateThreatLevel() const override {
+    [[nodiscard]] double calculateThreatLevel() const override {
         return (Criminal::calculateThreatLevel() * powerScale) + 50.0;
     }
 
-    std::string type() const override { return "Meta-Human"; }
+    [[nodiscard]] std::string type() const override { return "Meta-Human"; }
 
-    std::string specialty() const override {
+    [[nodiscard]] std::string specialty() const override {
         return "Superhuman Ability: " + powerSource;
     }
 

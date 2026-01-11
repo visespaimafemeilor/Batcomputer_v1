@@ -36,9 +36,8 @@ std::shared_ptr<DatabaseEntry> DatabaseEntry::createFromStream(std::istream& in)
     }
     else {
         // daca nu este 100 sau 200, presupunem ca este un cod de Criminal
-        CriminalType ct = static_cast<CriminalType>(typeId);
 
-        switch (ct) {
+        switch (static_cast<CriminalType>(typeId)) {
             case CriminalType::HACKER:
                 entry = std::make_shared<Hacker>();
                 break;

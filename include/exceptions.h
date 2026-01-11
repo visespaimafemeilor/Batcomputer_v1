@@ -10,20 +10,20 @@ protected:
 public:
     explicit BatcomputerException(std::string msg) : message(std::move(msg)) {}
     [[nodiscard]] const char* what() const noexcept override { return message.c_str(); }
-    virtual ~BatcomputerException() noexcept = default;
+    ~BatcomputerException() noexcept override = default;
 };
 
-class FileLoadException : public BatcomputerException {
+class FileLoadException final : public BatcomputerException {
 public:
     explicit FileLoadException(const std::string& filename) : BatcomputerException("Failed to load file: " + filename) {}
 };
 
-class InvalidDataException : public BatcomputerException {
+class InvalidDataException final : public BatcomputerException {
 public:
     explicit InvalidDataException(const std::string& details) : BatcomputerException("Invalid data encountered: " + details) {}
 };
 
-class DatabaseOperationException : public BatcomputerException {
+class DatabaseOperationException final : public BatcomputerException {
 public:
     explicit DatabaseOperationException(const std::string& operation) : BatcomputerException("Database operation failed: " + operation) {}
 };

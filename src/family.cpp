@@ -189,7 +189,7 @@ void Family::simulateSiege(const std::vector<std::shared_ptr<DatabaseEntry>>& da
     }
 }
 
-void Family::runTrainingDay(std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& memberName) {
+void Family::runTrainingDay(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& memberName) {
     bool batmanPresent = false;
     for (const auto& e : database) {
         if (e->getName() == "Batman") { batmanPresent = true; break; }

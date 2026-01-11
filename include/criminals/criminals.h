@@ -4,7 +4,6 @@
 #include "../database_entry.h"
 #include <string>
 #include <vector>
-#include <iostream>
 
 enum class CriminalType {
     GENERIC,
@@ -28,36 +27,36 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Criminal& cr);
 
-    int getId() const;
-    int getRank() const;
-    const std::vector<std::string>& getIntel() const;
+    [[nodiscard]] int getId() const;
+    [[nodiscard]] int getRank() const;
+    [[nodiscard]] const std::vector<std::string>& getIntel() const;
 
     static int getCriminalCount() { return criminalCount; }
 
-    bool loadCriminal(std::istream& file);
+    //bool loadCriminal(std::istream& file);
     void promote(int inc = 1);
-    virtual double calculateThreatLevel() const;
+    [[nodiscard]] virtual double calculateThreatLevel() const;
     void displayInfo() const override;
 
-    double assessThreat() const override;
-    std::unique_ptr<DatabaseEntry> clone() const override;
+    [[nodiscard]] double assessThreat() const override;
+    [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;
 
     Criminal(const Criminal& other);
     Criminal& operator=(Criminal other);
     friend void swap(Criminal& a, Criminal& b) noexcept;
 
-    std::string type() const override;
-    std::string summary() const override;
+    [[nodiscard]] std::string type() const override;
+    [[nodiscard]] std::string summary() const override;
     bool load(std::istream& in) override;
     void save(std::ostream& out) const override;
     static void showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db);
 
     static void searchByName(const std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name);
-    static void promoteByName(std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name);
+    static void promoteByName(const std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name);
 
-    bool simulateEscape(double facilitySecurityLevel) const;
+    [[nodiscard]] bool simulateEscape(double facilitySecurityLevel) const;
 
-    virtual std::string specialty() const { return std::string(); }
+    [[nodiscard]] virtual std::string specialty() const { return {}; }
 
     std::string interact(DatabaseEntry& other) override;
     static void simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>>& database, double systemSecurity);
