@@ -1,7 +1,7 @@
 #ifndef CRIMINALS_H
 #define CRIMINALS_H
 
-#include "database_entry.h"
+#include "../database_entry.h"
 #include <string>
 #include <vector>
 #include <iostream>

@@ -25,7 +25,7 @@ public:
     }
 
     void save(std::ostream& out) const override {
-        Criminal::save(out); // Salvăm datele de bază
+        Criminal::save(out);
         out << powerSource << "\n";
         out << powerScale << "\n";
     }

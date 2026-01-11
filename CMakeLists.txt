@@ -53,12 +53,15 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         src/database_entry.cpp
         include/database_entry.h
         src/criminals.cpp
-        include/criminals.h
+        include/criminals/criminals.h
         src/family.cpp
         include/family.h
         src/batsuit.cpp
         include/batsuit.h
-        include/metahuman.h
+        include/criminals/metahuman.h
+        include/Batcomputer.h
+        src/Batcomputer.cpp
+        src/Batcomputer.h
 )
 
 # Add include directory so compiler can find headers in include/

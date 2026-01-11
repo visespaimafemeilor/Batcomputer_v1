@@ -1,5 +1,5 @@
 #include "batsuit.h"
-#include "criminals.h"
+#include "../include/criminals/criminals.h"
 #include <algorithm>
 #include <sstream>
 

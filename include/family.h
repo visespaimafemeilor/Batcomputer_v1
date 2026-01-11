@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "criminals.h"
+#include "criminals/criminals.h"
 
 class Family : public DatabaseEntry {
 private:

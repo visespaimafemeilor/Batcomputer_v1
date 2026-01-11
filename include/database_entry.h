@@ -27,8 +27,7 @@ public:
     virtual bool load(std::istream& in) { (void)in; return false; }
     virtual void save(std::ostream& out) const { out << name << "\n"; }
 
-    // interaction hook - allow runtime-polymorphic interactions between entries
-    // default implementation returns a neutral message
+
     virtual std::string interact(DatabaseEntry& other) { (void)other; return std::string("No interaction available"); }
 
     // virtual copy
