@@ -53,27 +53,6 @@ int Criminal::getId() const {return id;}
 int Criminal::getRank() const  { return rank; }
 const std::vector<std::string>& Criminal::getIntel() const  { return intel; }
 
-
-std::unique_ptr<Criminal> CriminalFactory(std::istream& in) {
-    int typeInt;
-    if (!(in >> typeInt)) return nullptr;
-
-    const auto type = static_cast<CriminalType>(typeInt);
-    std::unique_ptr<Criminal> c;
-
-    switch (type) {
-        case CriminalType::HACKER:      c = std::make_unique<Hacker>(); break;
-        case CriminalType::BANK_ROBBER: c = std::make_unique<BankRobber>(); break;
-        case CriminalType::METAHUMAN:   c = std::make_unique<MetaHuman>(); break;
-        case CriminalType::CRIME_LORD:  c = std::make_unique<CrimeLord>(); break;
-        default:                        c = std::make_unique<Criminal>(); break;
-    }
-
-    if (c && c->load(in)) {
-        return c;
-    }
-    return nullptr;
-}
 bool Criminal::load(std::istream& in) {
     if(!(in >> id)) return false;
     in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

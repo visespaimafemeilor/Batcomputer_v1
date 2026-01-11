@@ -35,11 +35,7 @@ public:
     static void showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db);
 
     [[nodiscard]] const std::string& getCodename() const;
-    [[nodiscard]] const std::string& getCivilianName() const;
     [[nodiscard]] int getPhysicalPower() const;
-    [[nodiscard]] const std::vector<std::string>& getSkills() const;
-
-    [[maybe_unused]] static int getFamilyMemberCount() { return familyMemberCount; }
 
     bool loadFamilyMember(std::istream& file);
 

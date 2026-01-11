@@ -31,8 +31,6 @@ public:
     [[nodiscard]] int getRank() const;
     [[nodiscard]] const std::vector<std::string>& getIntel() const;
 
-    [[maybe_unused]] static int getCriminalCount() { return criminalCount; }
-
     //bool loadCriminal(std::istream& file);
     void promote(int inc = 1);
     [[nodiscard]] virtual double calculateThreatLevel() const;

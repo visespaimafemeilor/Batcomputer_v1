@@ -46,8 +46,6 @@ public:
     [[nodiscard]] const std::string& getPart() const;
     [[nodiscard]] double getIntegrity() const;
 
-    [[maybe_unused]] static int getSuitPartCount() { return suitPartCount; }
-
     bool loadBatsuit(std::istream& file);
     [[nodiscard]] bool isCritical(double muchie=30.0) const;
     [[nodiscard]] std::string statusReport() const;

@@ -53,9 +53,7 @@ void Family::save(std::ostream& out) const {
 }
 
 const std::string& Family::getCodename() const { return name; }
-const std::string& Family::getCivilianName() const { return civilian_name; }
 int Family::getPhysicalPower() const { return physical_power; }
-const std::vector<std::string>& Family::getSkills() const { return skills; }
 
 bool Family::loadFamilyMember(std::istream& file) {
     if(!(file >> std::ws) || file.eof()) return false;
