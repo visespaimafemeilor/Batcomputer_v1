@@ -1,0 +1,108 @@
+#include "family.h"
+#include <algorithm>
+#include <limits>
+#include <iostream>
+
+int Family::familyMemberCount = 0;
+
+Family::Family(const Family& other)
+    : DatabaseEntry(other), civilian_name(other.civilian_name), physical_power(other.physical_power), skills(other.skills) { ++familyMemberCount; }
+
+Family::~Family() { --familyMemberCount; }
+
+void swap(Family& a, Family& b) noexcept {
+    using std::swap;
+    swap(a.name, b.name);
+    swap(a.civilian_name, b.civilian_name);
+    swap(a.physical_power, b.physical_power);
+    swap(a.skills, b.skills);
+}
+
+Family& Family::operator=(Family other) {
+    swap(*this, other);
+    return *this;
+}
+
+std::unique_ptr<DatabaseEntry> Family::clone() const {
+    return std::make_unique<Family>(*this);
+}
+
+void Family::displayInfo() const {
+    std::cout << "-- FAMILY: " << name << " (Civilian: " << civilian_name << ") --\n";
+}
+
+double Family::assessThreat() const {
+    // threat based on physical power and number of skills
+    return static_cast<double>(physical_power) * 5.0 + static_cast<double>(skills.size()) * 2.0;
+}
+
+std::string Family::type() const { return "Family"; }
+
+std::string Family::summary() const { return "Family: " + name + " (" + civilian_name + ")"; }
+
+bool Family::load(std::istream& in) {
+    return loadFamilyMember(in);
+}
+
+void Family::save(std::ostream& out) const {
+    out << name << "\n";
+    out << civilian_name << "\n";
+    out << physical_power << "\n";
+    out << skills.size() << "\n";
+    for(const auto& s : skills) out << s << "\n";
+}
+
+const std::string& Family::getCodename() const { return name; }
+const std::string& Family::getCivilianName() const { return civilian_name; }
+int Family::getPhysicalPower() const { return physical_power; }
+const std::vector<std::string>& Family::getSkills() const { return skills; }
+
+bool Family::loadFamilyMember(std::istream& file) {
+    if(!(file >> std::ws) || file.eof()) return false;
+    if(!std::getline(file, name)) return false;
+    if(!std::getline(file, civilian_name)) return false;
+    if(!(file >> physical_power)) return false;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    int skillCount = 0;
+    if(!(file >> skillCount)) return false;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    skills.clear();
+    for(int i = 0; i < skillCount; ++i) {
+        std::string line;
+        if(!std::getline(file, line)) return false;
+        skills.push_back(line);
+    }
+    return true;
+}
+
+bool Family::fight(const Criminal& enemy) const {
+    int powerScore = physical_power + static_cast<int>(skills.size()) * 2;
+    int enemyScore = enemy.getRank() * 3;
+    return powerScore >= enemyScore;
+}
+
+std::string Family::fightReport(const Criminal& enemy) const {
+    bool win = fight(enemy);
+    std::string res = name + " vs " + enemy.getName() + ": ";
+    res += (win ? "WIN" : "LOSE");
+    res += " (Power: " + std::to_string(physical_power) + ", Rank: " + std::to_string(enemy.getRank()) + ")\n";
+    return res;
+}
+
+std::string Family::simulateBattle(const Criminal& enemy) const {
+    int skillBonus = static_cast<int>(skills.size());
+    int odds = physical_power + skillBonus - (enemy.getRank() * 2);
+    if(odds > 5) return "Decisive victory for " + name + "\n";
+    if(odds > 0) return "Close win for " + name + "\n";
+    if(odds == 0) return "Draw between " + name + " and " + enemy.getName() + "\n";
+    return "Narrow loss for " + name + "\n";
+}
+
+std::string Family::interact(DatabaseEntry& other) {
+    if(auto* cr = dynamic_cast<Criminal*>(&other)){
+        bool win = fight(*cr);
+        if(win) return name + " confronts " + cr->getName() + " and wins!";
+        else return name + " confronts " + cr->getName() + " and loses.";
+    }
+    return name + " has no special interaction with " + other.type();
+}
