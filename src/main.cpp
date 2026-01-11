@@ -107,6 +107,8 @@ void handleOperationsMenu(BatComputer& bc) {
         std::cout << "3) Generate Strategic Crime Report\n";
         std::cout << "4) Simulate Escape Attempt (Single)\n";
         std::cout << "5) Interactive Entry Hook (Polymorphic Interaction)\n";
+        std::cout << "6) Simulate Gotham Siege\n";
+        std::cout << "7) Run Forensics Analysis\n";
         std::cout << "0) BACK TO MAIN MENU\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -136,6 +138,12 @@ void handleOperationsMenu(BatComputer& bc) {
                 std::cout << "Index 2: "; std::cin >> i2;
                 bc.performInteraction(i1, i2); break;
             }
+            case 6: {
+                bc.runSiege(); break;
+            }
+            case 7: {
+                bc.runForensics(); break;
+            }
         }
     }
 }
@@ -146,6 +154,8 @@ void handleBatCaveMenu(BatComputer& bc) {
         std::cout << "\n--- [BAT-CAVE SYSTEMS] ---\n";
         std::cout << "1) Show Batsuit Status\n";
         std::cout << "2) Run Maintenance\n";
+        std::cout << "3) Redistribute Suit Integrity\n";
+        std::cout << "4) Combat Survival Simulation\n";
         std::cout << "0) BACK TO MAIN MENU\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -154,6 +164,14 @@ void handleBatCaveMenu(BatComputer& bc) {
         switch (choice) {
             case 1: bc.showBatsuit(); break;
             case 2: bc.batcaveMaintenance(); break;
+            case 3: bc.runSuitRebalance(); break;
+            case 4: {
+                std::string name;
+                std::cout << "Target enemy for simulation: ";
+                std::getline(std::cin, name);
+                bc.checkSurvival(name);
+                break;
+        }
         }
     }
 }
@@ -176,8 +194,15 @@ void handleAdminMenu(BatComputer& bc) {
             case 2: bc.addNewFamilyMember(); break;
             case 3: bc.addNewBatsuitPart(); break;
             case 4: {
-                std::string n; std::cout << "Name: "; std::getline(std::cin, n);
-                bc.promoteCriminal(n); break;
+                    std::string n; std::cout << "Name: "; std::getline(std::cin, n);
+                    bc.promoteCriminal(n); break;
+            }
+            case 5: {
+                    std::string name;
+                    std::cout << "Enter Family Member for training: ";
+                    std::getline(std::cin, name);
+                    bc.runTraining(name);
+                    break;
             }
         }
     }

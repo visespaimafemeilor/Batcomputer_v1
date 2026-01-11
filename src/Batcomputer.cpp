@@ -46,64 +46,23 @@ void BatComputer::saveDatabase() {
 }
 
 void BatComputer::showAllCriminals() const {
-    std::cout << "\n=== ARKHAM ASYLUM RECORDS ===\n";
-    for (const auto& e : database) {
-        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
-            c->displayInfo();
-            std::cout << "Rank: " << c->getRank() << " | Threat: " << c->calculateThreatLevel() << "\n";
-            if (!c->specialty().empty()) std::cout << "Specialty: " << c->specialty() << "\n";
-            std::cout << "--------------------------\n";
-        }
-    }
+    Criminal::showAll(this->database);
 }
 
 void BatComputer::showBatFamily() const {
-    std::cout << "\n=== BAT-FAMILY FILES ===\n";
-    for (const auto& e : database) {
-        if (auto f = std::dynamic_pointer_cast<Family>(e)) {
-            f->displayInfo();
-            std::cout << "Power: " << f->getPhysicalPower() << "\n";
-            std::cout << "--------------------------\n";
-        }
-    }
+    Family::showAll(this->database);
 }
 
 void BatComputer::showBatsuit() const {
-    std::cout << "\n=== BATSUIT INTEGRITY REPORT ===\n";
-    for (const auto& e : database) {
-        if (auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
-            std::cout << b->statusReport() << "\n";
-        }
-    }
+    Batsuit::showAll(this->database);
 }
 
 void BatComputer::searchCriminal(const std::string& name) const {
-    bool found = false;
-    for (const auto& e : database) {
-        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
-            if (c->getName() == name) {
-                std::cout << "[FOUND] ";
-                c->displayInfo();
-                std::cout << "Intel count: " << c->getIntel().size() << "\n";
-                found = true;
-                break;
-            }
-        }
-    }
-    if (!found) std::cout << "Criminal '" << name << "' not found in records.\n";
+    Criminal::searchByName(this->database, name);
 }
 
 void BatComputer::promoteCriminal(const std::string& name) {
-    for (auto& e : database) {
-        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
-            if (c->getName() == name) {
-                c->promote();
-                std::cout << "[UPDATE] " << name << " has been promoted to Rank " << c->getRank() << ".\n";
-                return;
-            }
-        }
-    }
-    std::cout << "Target not found for promotion.\n";
+    Criminal::promoteByName(this->database, name);
 }
 
 void BatComputer::simulateBattle(const std::string& familyMember, const std::string& criminalName) {
@@ -267,4 +226,22 @@ void BatComputer::batcaveMaintenance() {
 
 void BatComputer::generateCrimeReport() {
     Criminal::generateStrategicReport(this->database);
+}
+
+void BatComputer::runSiege() {
+    Family::simulateSiege(this->database);
+}
+
+void BatComputer::runForensics() {
+    Criminal::runForensics(this->database);
+}
+void BatComputer::runTraining(const std::string& name) {
+    Family::runTrainingDay(this->database, name);
+}
+void BatComputer::runSuitRebalance() {
+    Batsuit::redistributeIntegrity(this->database);
+}
+
+void BatComputer::checkSurvival(const std::string& enemy) {
+    Batsuit::calculateSurvivalOdds(this->database, enemy);
 }

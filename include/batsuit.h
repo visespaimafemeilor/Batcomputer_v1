@@ -7,9 +7,10 @@
 #include <string>
 #include <utility>
 #include <limits>
+#include <vector>
 
 class Batsuit : public DatabaseEntry{
-private:
+protected:
     int level;
     //std::string part;
     double integrity;
@@ -35,6 +36,7 @@ public:
     std::string summary() const override;
     bool load(std::istream& in) override;
     void save(std::ostream& out) const override;
+    static void showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db);
 
     Batsuit(const Batsuit& other);
     Batsuit& operator=(Batsuit other);
@@ -51,10 +53,11 @@ public:
     bool loadBatsuit(std::istream& file);
     [[nodiscard]] bool isCritical(double muchie=30.0) const;
     [[nodiscard]] std::string statusReport() const;
-    void applyBattleDamage(int damageBad);
+    void applyBattleDamage(double damageBad);
 
-    // interactions
     std::string interact(DatabaseEntry& other) override;
+    static void redistributeIntegrity(std::vector<std::shared_ptr<DatabaseEntry>>& database);
+    static void calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& enemyName);
 };
 
 #endif

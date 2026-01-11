@@ -32,6 +32,11 @@ public:
     void simulateArkhamBlackout(double systemSecurity);
     void batcaveMaintenance();
     void generateCrimeReport();
+    void runForensics();
+    void runSiege();
+    void runTraining(const std::string& name);
+    void runSuitRebalance();
+    void checkSurvival(const std::string& enemy);
 };
 
 #endif

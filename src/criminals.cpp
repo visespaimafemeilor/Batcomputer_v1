@@ -86,8 +86,60 @@ bool Criminal::load(std::istream& in) {
     return true;
 }
 
+void Criminal::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
+    std::cout << "\n=== ARKHAM ASYLUM RECORDS ===\n";
+    bool foundAny = false;
+
+    for (const auto& e : db) {
+        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+            c->displayInfo();
+            std::cout << "Rank: " << c->getRank()
+                      << " | Threat: " << c->calculateThreatLevel() << "\n";
+
+            if (!c->specialty().empty()) {
+                std::cout << "Specialty: " << c->specialty() << "\n";
+            }
+            std::cout << "--------------------------\n";
+            foundAny = true;
+        }
+    }
+
+    if (!foundAny) {
+        std::cout << "No criminal records found in the current database.\n";
+    }
+}
+
+void Criminal::searchByName(const std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name) {
+    bool found = false;
+    for (const auto& e : db) {
+        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+            if (c->getName() == name) {
+                std::cout << "[FOUND] ";
+                c->displayInfo();
+                std::cout << "Intel count: " << c->getIntel().size() << "\n";
+                found = true;
+                break;
+            }
+        }
+    }
+    if (!found) std::cout << "Criminal '" << name << "' not found in records.\n";
+}
+
 void Criminal::promote(int inc){
     rank += inc;
+}
+
+void Criminal::promoteByName(std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name) {
+    for (auto& e : db) {
+        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+            if (c->getName() == name) {
+                c->promote();
+                std::cout << "[UPDATE] " << name << " has been promoted to Rank " << c->getRank() << ".\n";
+                return;
+            }
+        }
+    }
+    std::cout << "Target not found for promotion.\n";
 }
 
 double Criminal::calculateThreatLevel() const{
@@ -252,4 +304,32 @@ void Criminal::generateStrategicReport(const std::vector<std::shared_ptr<Databas
     else if (ratio < 1.2) std::cout << "EQUILIBRIUM. Constant vigilance required.\n";
     else if (ratio < 2.0) std::cout << "DANGER. Criminal activity outpaces response capabilities!\n";
     else std::cout << "CRITICAL. Gotham is falling. Call the Justice League.\n";
+}
+
+void Criminal::runForensics(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
+    bool oracleProtects = false;
+    for (const auto& e : database) {
+        if (auto f = std::dynamic_pointer_cast<Family>(e)) {
+            if (f->getName() == "Oracle") oracleProtects = true;
+        }
+    }
+
+    std::cout << "\n--- DIGITAL FORENSICS REPORT ---\n";
+    if (oracleProtects) {
+        std::cout << "[SAFE] Oracle has encrypted all Bat-Systems. Hackers are powerless.\n";
+        return;
+    }
+
+    for (const auto& e : database) {
+        if (auto h = std::dynamic_pointer_cast<Hacker>(e)) {
+            std::cout << "[RISK] Hacker " << h->getName() << " is attempting to breach suit files...\n";
+            for (const auto& p : database) {
+                if (auto suit = std::dynamic_pointer_cast<Batsuit>(p)) {
+                    if (suit->getIntegrity() < 40.0) {
+                        std::cout << "  > WARNING: Data leaked from damaged part: " << suit->getName() << "\n";
+                    }
+                }
+            }
+        }
+    }
 }

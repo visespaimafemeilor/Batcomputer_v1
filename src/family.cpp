@@ -75,6 +75,25 @@ bool Family::loadFamilyMember(std::istream& file) {
     return true;
 }
 
+void Family::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
+    std::cout << "\n=== BAT-FAMILY FILES ===\n";
+    bool found = false;
+
+    for (const auto& e : db) {
+        if (auto f = std::dynamic_pointer_cast<Family>(e)) {
+            f->displayInfo();
+            std::cout << "Power Level: " << f->getPhysicalPower() << "\n";
+
+            std::cout << "--------------------------\n";
+            found = true;
+        }
+    }
+
+    if (!found) {
+        std::cout << "No Bat-Family members detected in current records.\n";
+    }
+}
+
 bool Family::fight(const Criminal& enemy) const {
     int powerScore = physical_power + static_cast<int>(skills.size()) * 2;
     int enemyScore = enemy.getRank() * 3;
@@ -142,4 +161,52 @@ void Family::coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>
     } else {
         std::cout << "[COMPLETE] Maintenance finished for " << repairedCount << " components.\n";
     }
+}
+
+void Family::simulateSiege(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
+    double totalDefense = 0;
+    double totalAttack = 0;
+
+    std::cout << "\n[!!!] GOTHAM UNDER SIEGE: ALL-OUT WAR [!!!]\n";
+
+    for (const auto& e : database) {
+        if (auto f = std::dynamic_pointer_cast<Family>(e)) {
+            totalDefense += f->getPhysicalPower();
+            std::cout << "[DEFENDER] " << f->getName() << " is on position.\n";
+        } else if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+            totalAttack += c->calculateThreatLevel();
+            std::cout << "[ATTACKER] " << c->getName() << " is advancing.\n";
+        }
+    }
+
+    std::cout << "\nTotal Defense Power: " << totalDefense << "\n";
+    std::cout << "Total Attack Power: " << totalAttack << "\n";
+
+    if (totalDefense >= totalAttack) {
+        std::cout << "RESULT: THE LINE HELD. Gotham remains under protection.\n";
+    } else {
+        std::cout << "RESULT: BREACH! The city has fallen to the criminal underworld.\n";
+    }
+}
+
+void Family::runTrainingDay(std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& memberName) {
+    bool batmanPresent = false;
+    for (const auto& e : database) {
+        if (e->getName() == "Batman") { batmanPresent = true; break; }
+    }
+
+    for (auto& e : database) {
+        if (auto f = std::dynamic_pointer_cast<Family>(e)) {
+            if (f->getCodename() == memberName) {
+                int boost = batmanPresent ? 25 : 10;
+                // Presupunem că avem un setter sau acces la power
+                f->physical_power += boost;
+                std::cout << "[TRAINING] " << memberName << " trained "
+                          << (batmanPresent ? "with Batman" : "alone")
+                          << ". Power increased by " << boost << "!\n";
+                return;
+            }
+        }
+    }
+    std::cout << "Member not found.\n";
 }

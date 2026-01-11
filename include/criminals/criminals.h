@@ -50,16 +50,19 @@ public:
     std::string summary() const override;
     bool load(std::istream& in) override;
     void save(std::ostream& out) const override;
+    static void showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db);
+
+    static void searchByName(const std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name);
+    static void promoteByName(std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name);
 
     bool simulateEscape(double facilitySecurityLevel) const;
 
     virtual std::string specialty() const { return std::string(); }
 
     std::string interact(DatabaseEntry& other) override;
-
     static void simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>>& database, double systemSecurity);
-
     static void generateStrategicReport(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
+    static void runForensics(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
 
 };
 

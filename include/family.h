@@ -8,7 +8,7 @@
 #include "criminals/criminals.h"
 
 class Family : public DatabaseEntry {
-private:
+protected:
     std::string civilian_name;
     int physical_power;
     std::vector<std::string> skills;
@@ -34,6 +34,7 @@ public:
     std::string summary() const override;
     bool load(std::istream& in) override;
     void save(std::ostream& out) const override;
+    static void showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db);
 
     // getters
     [[nodiscard]] const std::string& getCodename() const;
@@ -52,6 +53,8 @@ public:
     // interactions with other database entries
     std::string interact(DatabaseEntry& other) override;
     static void coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
+    static void simulateSiege(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
+    static void runTrainingDay(std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& memberName);
 };
 
 #endif // FAMILY_H
