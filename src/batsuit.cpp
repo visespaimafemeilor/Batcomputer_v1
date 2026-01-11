@@ -38,9 +38,8 @@ bool Batsuit::load(std::istream& in) {
 }
 
 void Batsuit::save(std::ostream& out) const {
-    out << name << "\n";
-    out << level << "\n";
-    out << integrity << "\n";
+    out << 200 << "\n"; // ID-ul "200" inseamna mereu BATSUIT
+    out << name << "\n" << level << "\n" << integrity << "\n";
 }
 
 Batsuit::Batsuit(const Batsuit& other)

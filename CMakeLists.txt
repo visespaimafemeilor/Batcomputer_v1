@@ -58,6 +58,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         include/family.h
         src/batsuit.cpp
         include/batsuit.h
+        include/metahuman.h
 )
 
 # Add include directory so compiler can find headers in include/

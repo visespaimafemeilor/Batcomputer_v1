@@ -45,9 +45,8 @@ bool Family::load(std::istream& in) {
 }
 
 void Family::save(std::ostream& out) const {
-    out << name << "\n";
-    out << civilian_name << "\n";
-    out << physical_power << "\n";
+    out << 100 << "\n"; // ID-ul "100" inseamna mereu FAMILY
+    out << name << "\n" << civilian_name << "\n" << physical_power << "\n";
     out << skills.size() << "\n";
     for(const auto& s : skills) out << s << "\n";
 }

@@ -2,6 +2,10 @@
 #include "criminals.h"
 #include "family.h"
 #include "batsuit.h"
+#include "hacker.h"
+#include "crimeLord.h"
+#include "bank_robber.h"
+#include "metahuman.h"
 #include <memory>
 #include <utility>
 #include <iostream>
@@ -12,11 +16,13 @@
 
 int Criminal::criminalCount = 0;
 
-Criminal::Criminal(int id_, std::string name_, int rank_, const std::vector<std::string>& intel_) :
+
+Criminal::Criminal(int id_, std::string name_, int rank_, const std::vector<std::string>& intel_, CriminalType cat) :
     DatabaseEntry(std::move(name_)),
     id{id_},
     rank{rank_},
-    intel{intel_}
+    intel{intel_},
+    category{cat}
 { ++criminalCount; }
 
 Criminal::~Criminal() { --criminalCount; }
@@ -38,6 +44,48 @@ int Criminal::getId() const {return id;}
 int Criminal::getRank() const  { return rank; }
 const std::vector<std::string>& Criminal::getIntel() const  { return intel; }
 
+
+std::unique_ptr<Criminal> CriminalFactory(std::istream& in) {
+    int typeInt;
+    if (!(in >> typeInt)) return nullptr;
+
+    CriminalType type = static_cast<CriminalType>(typeInt);
+    std::unique_ptr<Criminal> c;
+
+    switch (type) {
+        case CriminalType::HACKER:      c = std::make_unique<Hacker>(); break;
+        case CriminalType::BANK_ROBBER: c = std::make_unique<BankRobber>(); break;
+        case CriminalType::METAHUMAN:   c = std::make_unique<MetaHuman>(); break;
+        case CriminalType::CRIME_LORD:  c = std::make_unique<CrimeLord>(); break;
+        default:                        c = std::make_unique<Criminal>(); break;
+    }
+
+    if (c && c->load(in)) {
+        return c;
+    }
+    return nullptr;
+}
+bool Criminal::load(std::istream& in) {
+    // Folosim logica existentă de citire
+    if(!(in >> id)) return false;
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if(!getline(in, name)) return false;
+    if(!(in >> rank)) return false;
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    int intelCount;
+    if(!(in >> intelCount)) return false;
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    intel.clear();
+    for(int i = 0; i < intelCount; ++i) {
+        std::string line;
+        if(!getline(in, line)) return false;
+        intel.push_back(line);
+    }
+    return true;
+}
+/*
 bool Criminal::loadCriminal(std::istream& file)
 {
     if(!(file >> id))
@@ -62,6 +110,7 @@ bool Criminal::loadCriminal(std::istream& file)
     }
     return true;
 }
+*/
 
 void Criminal::promote(int inc){
     rank += inc;
@@ -108,11 +157,9 @@ std::string Criminal::summary() const {
     return "Criminal: " + name + " (Rank: " + std::to_string(rank) + ")";
 }
 
-bool Criminal::load(std::istream& in) {
-    return loadCriminal(in);
-}
 
 void Criminal::save(std::ostream& out) const {
+    out << static_cast<int>(category) << "\n"; // Salvăm tipul pentru MasterFactory
     out << id << "\n";
     out << name << "\n";
     out << rank << "\n";

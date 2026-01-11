@@ -1,25 +1,30 @@
 #ifndef HACKER_H
 #define HACKER_H
-
 #include "criminals.h"
 
 class Hacker : public Criminal {
+private:
+    int bypassLevel;
 public:
-    explicit Hacker(int id_ = 0, std::string name_ = "", int rank_ = 1, const std::vector<std::string>& intel_ = {})
-        : Criminal(id_, std::move(name_), rank_, intel_) {}
-    ~Hacker() override = default;
+    Hacker(int id_ = 0, std::string name_ = "", int rank_ = 1, int bypass_ = 5)
+        : Criminal(id_, name_, rank_, {}, CriminalType::HACKER), bypassLevel(bypass_) {}
 
-    double calculateThreatLevel() const override {
-        double base = Criminal::calculateThreatLevel();
-        double bonus = 0.0;
-        for (const auto &s : getIntel()) if (s.find("exploit") != std::string::npos) bonus += 4.0;
-        return base + bonus;
+    // Funcție unică pentru Hacker
+    void hackSystem() {
+        std::cout << name << " is bypassing security with level " << bypassLevel << "!\n";
     }
 
-    std::unique_ptr<DatabaseEntry> clone() const override { return std::make_unique<Hacker>(*this); }
-    std::string type() const override { return std::string("Hacker"); }
-    std::string summary() const override { return std::string("Hacker: " + getName() + " (Rank: " + std::to_string(getRank()) + ")"); }
+    // Override pentru a schimba comportamentul
+    double calculateThreatLevel() const override {
+        return Criminal::calculateThreatLevel() + (bypassLevel * 5);
+    }
+
+    std::string type() const override { return "Hacker"; }
+
+    // Trebuie să modificăm și save/load ca să includă bypassLevel
+    void save(std::ostream& out) const override {
+        Criminal::save(out);
+        out << bypassLevel << "\n";
+    }
 };
-
-#endif // HACKER_H
-
+#endif

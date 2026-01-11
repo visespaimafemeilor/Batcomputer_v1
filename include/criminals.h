@@ -6,16 +6,25 @@
 #include <vector>
 #include <iostream>
 
+enum class CriminalType {
+    GENERIC,
+    BANK_ROBBER,
+    HACKER,
+    CRIME_LORD,
+    METAHUMAN
+};
+
 class Criminal : public DatabaseEntry {
-private:
+protected:
     int id;
     int rank;
     std::vector<std::string> intel;
+    CriminalType category;
 public:
     static int criminalCount;
 
     // constructor declaration (defined in src/criminals.cpp)
-    explicit Criminal(int id_ = 0, std::string name_ = "", int rank_ = 1, const std::vector<std::string>& intel_ = {});
+    explicit Criminal(int id_ = 0, std::string name_ = "", int rank_ = 1, const std::vector<std::string>& intel_ = {}, CriminalType cat = CriminalType::GENERIC);
     ~Criminal() override;
 
     friend std::ostream& operator<<(std::ostream& os, const Criminal& cr);

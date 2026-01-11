@@ -14,7 +14,7 @@
 #include "stealth_suit.h"
 #include "bank_robber.h"
 #include "hacker.h"
-#include "mastermind.h"
+#include "crimeLord.h"
 
 int main(){
     try {
@@ -29,62 +29,15 @@ int main(){
 
         std::vector<std::shared_ptr<DatabaseEntry>> database;
 
-        std::ifstream file1("criminals.txt");
-        std::ifstream file2("family.txt");
-        std::ifstream file3("batsuit.txt");
-
-        if(!file1) throw FileLoadException("criminals.txt");
-        if(!file2) throw FileLoadException("family.txt");
-        if(!file3) throw FileLoadException("batsuit.txt");
-
-        while(true) {
-            Criminal c;
-            if(!c.loadCriminal(file1)) break;
-            criminals.push_back(c);
-        }
-        for(auto& criminal : criminals) {
-            database.push_back(std::make_shared<Criminal>(criminal));
+        std::ifstream fin("database.txt");
+        int total;
+        if(fin >> total) {
+            for(int i = 0; i < total; ++i) {
+                auto obj = DatabaseEntry::createFromStream(fin);
+                if(obj) database.push_back(obj);
+            }
         }
 
-        while(true) {
-            Family m;
-            if(!m.loadFamilyMember(file2)) break;
-            family.push_back(m);
-        }
-        for(auto& i : family) {
-            database.push_back(std::make_shared<Family>(i));
-        }
-
-        while(true) {
-            Batsuit b;
-            if(!b.loadBatsuit(file3)) break;
-            suit.push_back(b);
-        }
-        for(auto& i : suit) {
-            database.push_back(std::make_shared<Batsuit>(i));
-        }
-
-        // add example specialized criminals to the polymorphic database
-        database.push_back(std::make_shared<BankRobber>(101, std::string("Vault King"), 5, std::vector<std::string>{"vault map","timing"}));
-        database.push_back(std::make_shared<Hacker>(102, std::string("ZeroDay"), 4, std::vector<std::string>{"exploit","credentials"}));
-        database.push_back(std::make_shared<Mastermind>(103, std::string("Professor X"), 9, std::vector<std::string>{"plan A","contacts"}));
-
-        // small gadget demo using BatLoadout (composition)
-        BatLoadout loadout;
-        auto emp = std::make_unique<EMPDevice>();
-        loadout.addGadget(std::move(emp));
-
-        // create a StealthSuit from first available parts (if any)
-        std::vector<Batsuit> partsForStealth;
-        if(suit.size() >= 2) {
-            partsForStealth.push_back(suit[0]);
-            partsForStealth.push_back(suit[1]);
-        } else if(!suit.empty()) {
-            partsForStealth.push_back(suit[0]);
-        }
-        if(!partsForStealth.empty()) {
-            loadout.equipFullSuit(std::make_unique<StealthSuit>(std::move(partsForStealth)));
-        }
 
         std::cout << "[SYSTEM ONLINE] Welcome, Dark Knight.\n";
         std::cout << "Entities loaded: " << database.size() << "\n";
@@ -123,41 +76,80 @@ int main(){
 
             switch(choice)
             {
-                case 1:{
-                    std::cout << "\n=== Criminal Database ===\n";
-                    for(const auto& c : criminals){
-                        std::cout << "ID: " << c.getId() << "\n";
-                        std::cout << "Name: " << c.getName() << "\n";
-                        std::cout << "Rank: " << c.getRank() << "\n";
-                        std::cout << "Intel count: " << c.getIntel().size() << "\n";
-                        std::cout << "Threat Level: " << c.calculateThreatLevel() << "\n\n";
+            case 0: {
+                    std::ofstream fout("database.txt");
+                    if (fout) {
+                        fout << database.size() << "\n";
+                        for (const auto& entry : database) {
+                            entry->save(fout);
+                        }
+                        fout.close();
+                        std::cout << "Database saved successfully.\n";
                     }
+                    std::cout << "\nExiting Bat-Computer... Stay vigilant.\n";
                     break;
-                }
+            }
+            case 1: {
+                    std::cout << "\n=== Criminal Database (Inmates) ===\n";
+                    bool foundAny = false;
+                    for (const auto& e : database) {
+                        if (auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+                            foundAny = true;
+                            std::cout << "ID: " << c->getId() << "\n";
+                            std::cout << "Codename: " << c->getName() << "\n";
+                            std::cout << "Type: " << c->type() << "\n";
+                            std::cout << "Rank: " << c->getRank() << "\n";
+                            std::cout << "Intel count: " << c->getIntel().size() << "\n";
+                            std::cout << "Threat Level: " << c->calculateThreatLevel() << "\n";
 
-                case 2:{
-                    std::cout << "\n=== Bat-Family Members ===\n";
-                    for(const auto& f : family){
-                        std::cout << "Codename: " << f.getCodename() << "\n";
-                        std::cout << "Civilian Name: " << f.getCivilianName() << "\n";
-                        std::cout << "Physical Power: " << f.getPhysicalPower() << "\n";
-                        std::cout << "Skills: ";
-                        for(const auto& skill : f.getSkills())
-                            std::cout << skill << ", ";
-                        std::cout << "\n\n";
-                    }
-                    break;
-                }
+                            std::string spec = c->specialty();
+                            if(!spec.empty()) std::cout << "Specialty: " << spec << "\n";
 
-                case 3:{
-                    std::cout << "\n=== Batsuit Loadout ===\n";
-                    for(const auto& b : suit){
-                        std::cout << "Part: " << b.getPart() << "\n";
-                        std::cout << "Level: " << b.getLevel() << "\n";
-                        std::cout << "Integrity: " << b.getIntegrity() << "\n\n";
+                            std::cout << "--------------------------\n";
+                        }
                     }
+                    if (!foundAny) std::cout << "No criminal records found in database.\n";
                     break;
-                }
+            }
+
+            case 2: {
+                        std::cout << "\n=== Bat-Family Members ===\n";
+                        bool foundAny = false;
+                        for (const auto& e : database) {
+                            if (auto f = std::dynamic_pointer_cast<Family>(e)) {
+                                foundAny = true;
+                                std::cout << "Codename: " << f->getCodename() << "\n";
+                                std::cout << "Civilian Name: " << f->getCivilianName() << "\n";
+                                std::cout << "Physical Power: " << f->getPhysicalPower() << "\n";
+                                std::cout << "Skills: ";
+                                const auto& skills = f->getSkills();
+                                for (size_t i = 0; i < skills.size(); ++i) {
+                                    std::cout << skills[i] << (i == skills.size() - 1 ? "" : ", ");
+                                }
+                                std::cout << "\n--------------------------\n";
+                            }
+                        }
+                        if (!foundAny) std::cout << "No family members found in database.\n";
+                        break;
+            }
+
+            case 3: {
+                        std::cout << "\n=== Batsuit Loadout ===\n";
+                        bool foundAny = false;
+                        for (const auto& e : database) {
+                            // Încercăm să convertim intrarea la tipul Batsuit
+                            if (auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
+                                foundAny = true;
+                                std::cout << "Part: " << b->getPart() << "\n";
+                                std::cout << "Level: " << b->getLevel() << "\n";
+                                std::cout << "Integrity: " << b->getIntegrity() << "%\n";
+                                std::cout << "Status: " << b->statusReport() << "\n";
+                                std::cout << "--------------------------\n";
+                            }
+                        }
+                        if (!foundAny) std::cout << "No batsuit parts found in database.\n";
+                        break;
+            }
 
                 case 4:{
                         std::cout << "\nEnter criminal name for intel: ";
@@ -225,35 +217,30 @@ int main(){
                     break;
                 }
 
-                case 7:{
-                    std::cout << "\nChoose family member (codename): ";
-                    std::string codename;
-                    std::getline(std::cin, codename);
-                    std::cout << "Choose criminal: ";
-                    std::string cname;
-                    std::getline(std::cin, cname);
+            case 7: {
+                    std::string codename, cname;
+                    std::cout << "\nChoose family member (codename): "; std::getline(std::cin, codename);
+                    std::cout << "Choose criminal: "; std::getline(std::cin, cname);
 
-                    const Family* vigillante = nullptr;
-                    const Criminal* enemy = nullptr;
+                    std::shared_ptr<Family> vigilante = nullptr;
+                    std::shared_ptr<Criminal> enemy = nullptr;
 
-                    for(const auto& f : family)
-                        if(f.getCodename() == codename) vigillante = &f;
-                    for(const auto& c : criminals)
-                        if(c.getName() == cname) enemy = &c;
+                    for(auto& e : database) {
+                        if(!vigilante) vigilante = std::dynamic_pointer_cast<Family>(e);
+                        if(vigilante && vigilante->getCodename() != codename) vigilante = nullptr;
 
-                    if(vigillante && enemy){
-                        std::cout << vigillante->getCodename() << " (Power: "
-                                  << vigillante->getPhysicalPower() << ") "
-                                  << "VS " << enemy->getName() << " (Rank: "
-                                  << enemy->getRank() << ")\n";
-
-                        std::cout << vigillante->fightReport(*enemy);
-                        std::cout << vigillante->simulateBattle(*enemy);
+                        if(!enemy) enemy = std::dynamic_pointer_cast<Criminal>(e);
+                        if(enemy && enemy->getName() != cname) enemy = nullptr;
                     }
-                    else
-                        std::cout << "Invalid names.\n";
+
+                    if(vigilante && enemy) {
+                        std::cout << vigilante->fightReport(*enemy);
+                        std::cout << vigilante->simulateBattle(*enemy);
+                    } else {
+                        std::cout << "One or both entities not found.\n";
+                    }
                     break;
-                }
+            }
 
                 case 8:{
                     std::cout << "\nBatsuit Status Report\n";
@@ -265,24 +252,22 @@ int main(){
                     break;
                 }
 
-                case 9:{
+            case 9: {
                     std::cout << "\nEnter criminal name to promote: ";
-                    std::string name;
-                    std::getline(std::cin, name);
+                    std::string name; std::getline(std::cin, name);
                     bool found = false;
-                    for(auto& c : criminals){
-                        if(c.getName() == name){
-                            c.promote();
-                            std::cout << "Criminal promoted!\n";
-                            std::cout << "New Rank: " << c.getRank() << "\n";
-                            std::cout << "Threat Level: " << c.calculateThreatLevel() << "\n";
-                            found = true;
-                            break;
+                    for(auto& e : database) {
+                        if(auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+                            if(c->getName() == name) {
+                                c->promote();
+                                std::cout << "Criminal promoted! New Rank: " << c->getRank() << "\n";
+                                found = true; break;
+                            }
                         }
                     }
                     if(!found) std::cout << "No such criminal.\n";
                     break;
-                }
+            }
 
                 case 10:{
                     std::cout << "\nEnter criminal name for escape simulation: ";
@@ -365,16 +350,6 @@ int main(){
                     break;
                 }
 
-                 case 13: {
-                     std::cout << "\n=== Batman gadget demo ===\n";
-                     loadout.listGadgets();
-                     loadout.useGadget(0);
-                     break;
-                 }
-
-                case 0:
-                    std::cout << "\nExiting Bat-Computer... Stay vigilant.\n";
-                    break;
 
                 default:
                     std::cout << "Invalid option. Try again.\n";
@@ -391,4 +366,3 @@ int main(){
         return 3;
     }
 }
-
