@@ -4,6 +4,15 @@
 CrimeLord::CrimeLord(const int id_, const std::string& name_, const int rank_)
     : Criminal(id_, name_, rank_, {}, CriminalType::CRIME_LORD) {}
 
+std::unique_ptr<DatabaseEntry> CrimeLord::clone() const {
+    return std::make_unique<CrimeLord>(*this);
+}
+
+void CrimeLord::doDisplay(std::ostream& os) const {
+    Criminal::doDisplay(os);
+    os << " | Status: Crime Lord (Force Multiplier Active)\n";
+}
+
 void CrimeLord::inspireThugs(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
     std::cout << "\n[!] UNDERWORLD RALLY: Crime Lord " << name << " is inspiring the troops!\n";
     

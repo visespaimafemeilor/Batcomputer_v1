@@ -65,6 +65,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         include/criminals/hacker.h
         src/criminals/crimeLord.cpp
         include/criminals/crimeLord.h
+        src/criminals/bank_robber.cpp
+        src/criminals/metahuman.cpp
 )
 
 # Add include directory so compiler can find headers in include/

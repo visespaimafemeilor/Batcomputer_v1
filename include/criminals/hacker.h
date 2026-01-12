@@ -8,8 +8,12 @@
 class Hacker final : public Criminal {
 protected:
     int bypassLevel;
+    void doDisplay(std::ostream& os) const override; //
+
 public:
     explicit Hacker(int id_ = 0, const std::string& name_ = "", int rank_ = 1, int bypass_ = 5);
+
+    [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override; //
 
     void hackSystem(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const;
 

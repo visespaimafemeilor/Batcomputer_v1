@@ -2,9 +2,17 @@
 #include "batsuit.h"
 #include <iostream>
 
-Hacker::Hacker(const int id_, const std::string& name_, const int rank_, int bypass_)
+Hacker::Hacker(const int id_, const std::string& name_, const int rank_, const int bypass_)
     : Criminal(id_, name_, rank_, {}, CriminalType::HACKER), bypassLevel(bypass_) {}
 
+std::unique_ptr<DatabaseEntry> Hacker::clone() const {
+    return std::make_unique<Hacker>(*this);
+}
+
+void Hacker::doDisplay(std::ostream& os) const {
+    Criminal::doDisplay(os); // Reutilizăm afișarea de bază de la Criminal
+    os << " | Specialty: Digital Sabotage (Bypass Level: " << bypassLevel << ")\n";
+}
 void Hacker::hackSystem(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
     std::cout << "\n[!] CYBER-ATTACK: " << name << " (Bypass Lvl: " << bypassLevel 
               << ") is uploading a virus to the Bat-Network!\n";

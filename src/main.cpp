@@ -112,6 +112,7 @@ void handleOperationsMenu(BatComputer& bc) {
         std::cout << "7) Run Forensics Analysis\n";
         std::cout << "8) Cyber Defense (Scan for Hackers)\n";
         std::cout << "9) Underworld Surveillance (Scan for Crime Lords)\n";
+        std::cout << "10) Global Tactical Simulation\n";
         std::cout << "0) BACK TO MAIN MENU\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -152,6 +153,9 @@ void handleOperationsMenu(BatComputer& bc) {
                 break;
             case 9:
                 bc.runUnderworldSting();
+                break;
+            case 10:
+                bc.runGlobalTacticalSimulation();
                 break;
             case 0:
                 std::cout << "Returning to previous menu...\n";

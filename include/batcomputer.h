@@ -39,6 +39,7 @@ public:
     void checkSurvival(const std::string& enemy) const;
     void runGlobalCyberDefense() const;
     void runUnderworldSting() const;
+    void runGlobalTacticalSimulation() const;
 };
 
 #endif

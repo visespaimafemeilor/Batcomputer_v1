@@ -1,8 +1,6 @@
 #ifndef METAHUMAN_H
 #define METAHUMAN_H
 
-#include <utility>
-
 #include "criminals.h"
 
 class MetaHuman final : public Criminal {
@@ -10,33 +8,20 @@ protected:
     std::string powerSource;
     double powerScale;
 
+    void doDisplay(std::ostream& os) const override;
+
 public:
-    explicit MetaHuman(const int id_ = 0, const std::string& name_ = "", const int rank_ = 1,
-              std::string  source = "Unknown", const double scale = 1.0)
-        : Criminal(id_, name_, rank_, {}, CriminalType::METAHUMAN), 
-          powerSource(std::move(source)), powerScale(scale) {}
+    explicit MetaHuman(int id_ = 0, const std::string& name_ = "", int rank_ = 1,
+              std::string source = "Unknown", double scale = 1.0);
 
-    [[nodiscard]] double calculateThreatLevel() const override {
-        return Criminal::calculateThreatLevel() * powerScale + 50.0;
-    }
+    [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;
 
-    [[nodiscard]] std::string type() const override { return "Meta-Human"; }
+    [[nodiscard]] double calculateThreatLevel() const override;
+    [[nodiscard]] std::string type() const override;
+    [[nodiscard]] std::string specialty() const override;
 
-    [[nodiscard]] std::string specialty() const override {
-        return "Superhuman Ability: " + powerSource;
-    }
-
-    void save(std::ostream& out) const override {
-        Criminal::save(out);
-        out << powerSource << "\n";
-        out << powerScale << "\n";
-    }
-
-    bool load(std::istream& in) override {
-        if (!Criminal::load(in)) return false;
-        in >> powerSource >> powerScale;
-        return true;
-    }
+    void save(std::ostream& out) const override;
+    bool load(std::istream& in) override;
 };
 
 #endif

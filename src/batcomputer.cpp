@@ -288,3 +288,29 @@ void BatComputer::runUnderworldSting() const
         std::cout << "[INFO] No major crime lords are currently rallying troops.\n";
     }
 }
+
+void BatComputer::runGlobalTacticalSimulation() const
+{
+    std::cout << "\n=== [BAT-COMPUTER] STARTING GLOBAL TACTICAL SIMULATION ===\n";
+
+    for (auto& entry : database) {
+        if (const auto hacker = std::dynamic_pointer_cast<Hacker>(entry)) {
+            hacker->hackSystem(database);
+        }
+
+        else if (const auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
+            lord->inspireThugs(database);
+        }
+
+        else if (const auto meta = std::dynamic_pointer_cast<MetaHuman>(entry)) {
+            std::cout << "[!] MASSIVE THREAT: " << meta->getName()
+                      << " is using " << meta->type() << " powers!\n";
+            for (auto& e : database) {
+                if (const auto suit = std::dynamic_pointer_cast<Batsuit>(e)) {
+                    suit->applyBattleDamage(10.0);
+                }
+            }
+        }
+    }
+    std::cout << "=== SIMULATION CONCLUDED ===\n";
+}

@@ -6,8 +6,13 @@
 #include <memory>
 
 class CrimeLord final : public Criminal {
+protected:
+    void doDisplay(std::ostream& os) const override;
+
 public:
     explicit CrimeLord(int id_ = 0, const std::string& name_ = "", int rank_ = 1);
+
+    [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;
 
     void inspireThugs(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const;
 
