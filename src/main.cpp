@@ -3,6 +3,8 @@
 #include <limits>
 #include "batcomputer.h"
 #include "exceptions.h"
+#include "../inventory.hpp"
+#include "../BatFactory.hpp"
 
 void handleDatabaseMenu(const BatComputer& bc);
 void handleOperationsMenu(BatComputer& bc);
@@ -11,7 +13,21 @@ void handleAdminMenu(BatComputer& bc);
 
 
 int main() {
-    BatComputer bc;
+
+    Inventory<std::string> utilityBelt("Utility Belt Gadgets");
+    utilityBelt.addItem("Batarang");
+    utilityBelt.addItem("Smoke Pellet");
+    utilityBelt.addItem("Grapnel Gun");
+
+    Inventory<int> evidenceLocker("Evidence Room - Case IDs");
+    evidenceLocker.addItem(202401);
+    evidenceLocker.addItem(202402);
+
+    // Afișăm inventarele la pornire pentru a demonstra funcționalitatea
+    utilityBelt.displayInventory();
+    evidenceLocker.displayInventory();
+
+    BatComputer& bc = BatComputer::getInstance();
 
     try {
         std::cout << "Welcome, Dark Knight. Initializing Bat-Computer...\n";
@@ -113,6 +129,7 @@ void handleOperationsMenu(BatComputer& bc) {
         std::cout << "8) Cyber Defense (Scan for Hackers)\n";
         std::cout << "9) Underworld Surveillance (Scan for Crime Lords)\n";
         std::cout << "10) Global Tactical Simulation\n";
+        std::cout << "11) Compare Efficency\n";
         std::cout << "0) BACK TO MAIN MENU\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -157,6 +174,22 @@ void handleOperationsMenu(BatComputer& bc) {
             case 10:
                 bc.runGlobalTacticalSimulation();
                 break;
+            case 11: {
+                int i1, i2;
+                bc.showPolymorphicDatabase();
+                std::cout << "\nIntroduceti indecsii celor doua entitati de comparat:\n";
+                std::cout << "Index 1: "; std::cin >> i1;
+                std::cout << "Index 2: "; std::cin >> i2;
+
+                // TEMA 3 & TEMA 2: Apel funcție șablon protejat de try-catch
+                try {
+                    bc.analyzeMatchup(i1, i2);
+                } catch (const DatabaseOperationException& e) {
+                    std::cerr << "\n[CRITICAL ERROR] " << e.what() << "\n";
+                    std::cout << "Sfat: Verificati daca indecsii introdusi exista in lista de mai sus.\n";
+                }
+                break;
+        }
             case 0:
                 std::cout << "Returning to previous menu...\n";
                 break;

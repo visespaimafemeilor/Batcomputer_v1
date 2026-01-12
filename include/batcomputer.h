@@ -7,11 +7,21 @@
 #include "database_entry.h"
 
 class BatComputer {
+private:
+    static BatComputer* instance;
+    BatComputer() = default;
+
 protected:
     std::vector<std::shared_ptr<DatabaseEntry>> database;
     const std::string dbFilename = "database.txt";
 
 public:
+
+    static BatComputer& getInstance() {
+        if (!instance) instance = new BatComputer();
+        return *instance;
+    }
+
     // --- GESTIUNE DATABASE ---
     void loadDatabase();
     void saveDatabase() const;
@@ -22,6 +32,7 @@ public:
     void showPolymorphicDatabase() const;
     void searchCriminal(const std::string& name) const;
     void promoteCriminal(const std::string& name) const;
+    void analyzeMatchup(int idx1, int idx2) const;
     void simulateBattle(const std::string& familyMember, const std::string& criminalName) const;
     void performInteraction(int idx1, int idx2) const;
     void simulateEscape(const std::string& name, double securityLevel) const;

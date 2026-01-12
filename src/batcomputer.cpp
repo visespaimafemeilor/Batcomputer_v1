@@ -65,6 +65,20 @@ void BatComputer::promoteCriminal(const std::string& name) const
     Criminal::promoteByName(this->database, name);
 }
 
+void BatComputer::analyzeMatchup(const int idx1, const int idx2) const
+{
+    if (idx1 < 0 || idx1 >= static_cast<int>(database.size()) || idx2 < 0 || idx2 >= static_cast<int>(database.size())) {
+        throw DatabaseOperationException("Failed analyzeMatchup");
+    }
+
+    const auto obj1 = database[idx1];
+    if (const auto obj2 = database[idx2]; compareEfficiency(*obj1, *obj2)) {
+        std::cout << obj1->getName() << " Has a greater influence than " << obj2->getName() << "\n";
+    } else {
+        std::cout << obj2->getName() << " dominates from a tactical perspective.\n";
+    }
+}
+
 void BatComputer::simulateBattle(const std::string& familyMember, const std::string& criminalName) const
 {
     std::shared_ptr<Family> vigilante = nullptr;

@@ -38,7 +38,17 @@ public:
     [[nodiscard]] virtual std::unique_ptr<DatabaseEntry> clone() const = 0;
 
     static std::shared_ptr<DatabaseEntry> createFromStream(std::istream& in);
+
+    template <typename T1, typename T2>
+    static bool compareEfficiency(const T1& a, const T2& b) {
+        return a.assessThreat() > b.assessThreat();
+    }
 };
+
+template <typename T1, typename T2>
+bool compareEfficiency(const T1& a, const T2& b) {
+    return a.assessThreat() > b.assessThreat();
+}
 
 #endif // DATABASE_ENTRY_H
 
