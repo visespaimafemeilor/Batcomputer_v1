@@ -19,6 +19,7 @@ protected:
     int rank;
     std::vector<std::string> intel;
     CriminalType category;
+    void doDisplay(std::ostream& os) const override;
 public:
     static int criminalCount;
 
@@ -34,7 +35,6 @@ public:
     //bool loadCriminal(std::istream& file);
     void promote(int inc = 1);
     [[nodiscard]] virtual double calculateThreatLevel() const;
-    void displayInfo() const override;
 
     [[nodiscard]] double assessThreat() const override;
     [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;

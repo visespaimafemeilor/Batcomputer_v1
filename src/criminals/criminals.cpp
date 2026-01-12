@@ -44,8 +44,8 @@ std::ostream& operator<<(std::ostream& os, const Criminal& cr)
     return os;
 }
 
-void Criminal::displayInfo() const {
-    std::cout << "-- CRIMINAL: " << name << " (Rank: " << rank << ") --\n";
+void Criminal::doDisplay(std::ostream& os) const {
+    os << "-- CRIMINAL: " << name << " (Rank: " << rank << ") --\n";
 }
 
 int Criminal::getId() const {return id;}

@@ -27,6 +27,10 @@ double Batsuit::assessThreat() const {
     return static_cast<double>(level) * (integrity / 100.0) * 2.5;
 }
 
+void Batsuit::doDisplay(std::ostream& os) const {
+    os << "-- SUIT COMPONENT: " << name << " (Integrity: " << integrity << "%) --\n";
+}
+
 std::unique_ptr<DatabaseEntry> Batsuit::clone() const {
     return std::make_unique<Batsuit>(*this);
 }

@@ -11,6 +11,7 @@ protected:
     std::string civilian_name;
     int physical_power;
     std::vector<std::string> skills;
+    void doDisplay(std::ostream& os) const override;
 public:
     static int familyMemberCount;
 
@@ -26,7 +27,6 @@ public:
 
     [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;
 
-    void displayInfo() const override;
     [[nodiscard]] double assessThreat() const override;
     [[nodiscard]] std::string type() const override;
     [[nodiscard]] std::string summary() const override;

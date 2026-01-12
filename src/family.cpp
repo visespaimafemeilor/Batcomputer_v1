@@ -28,8 +28,8 @@ std::unique_ptr<DatabaseEntry> Family::clone() const {
     return std::make_unique<Family>(*this);
 }
 
-void Family::displayInfo() const {
-    std::cout << "-- FAMILY: " << name << " (Civilian: " << civilian_name << ") --\n";
+void Family::doDisplay(std::ostream& os) const {
+    os << "-- FAMILY: " << name << " (Civilian: " << civilian_name << ") --\n";
 }
 
 double Family::assessThreat() const {

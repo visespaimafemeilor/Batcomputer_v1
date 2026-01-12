@@ -3,7 +3,6 @@
 #define BATSUIT_H
 
 #include "database_entry.h"
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -14,17 +13,13 @@ protected:
     double integrity;
 
     void normalize();
+    void doDisplay(std::ostream& os) const override;
 
 public:
     static int suitPartCount;
 
     explicit Batsuit(int level_ = 1, std::string  part_ = "p", double integrity_ = 1.00);
     ~Batsuit() override;
-
-    void displayInfo() const override
-    {
-        std::cout<<"-- SUIT COMPONENT: "<< name<<" (Integrity: "<<integrity<<"%) --\n";
-    }
 
     [[nodiscard]] double assessThreat() const override;
     [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;

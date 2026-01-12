@@ -8,6 +8,7 @@
 class DatabaseEntry {
 protected:
     std::string name;
+    virtual void doDisplay(std::ostream& os) const = 0;
 public:
     static int totalEntities;
 
@@ -16,7 +17,9 @@ public:
 
     [[nodiscard]] const std::string& getName() const { return name; }
 
-    virtual void displayInfo() const = 0;
+    void displayInfo() const {
+        doDisplay(std::cout);
+    }
     [[nodiscard]] virtual double assessThreat() const = 0;
 
     // polymorphic I/O and summary
