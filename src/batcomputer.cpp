@@ -12,6 +12,8 @@
 
 // --- GESTIUNE DATABASE ---
 
+BatComputer* BatComputer::instance = nullptr;
+
 void BatComputer::loadDatabase() {
     std::ifstream fin(dbFilename);
     if (!fin) {
