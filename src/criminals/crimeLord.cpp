@@ -18,7 +18,7 @@ void CrimeLord::inspireThugs(const std::vector<std::shared_ptr<DatabaseEntry>>& 
     
     int count = 0;
     for (auto& entry : database) {
-        if (const auto other = std::dynamic_pointer_cast<Criminal>(entry)) {
+        if (Criminal* other = entry->asCriminal()) {
             if (other->getId() != this->id) {
                 other->promote(1);
                 std::cout << "    > " << other->getName() << " inspired! New Rank: " << other->getRank() << "\n";

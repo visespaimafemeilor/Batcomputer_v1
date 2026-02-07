@@ -22,6 +22,9 @@ public:
 
     void save(std::ostream& out) const override;
     bool load(std::istream& in) override;
+
+    MetaHuman* asMetaHuman() override { return this; }
+    [[nodiscard]] const MetaHuman* asMetaHuman() const override { return this; }
 };
 
 #endif

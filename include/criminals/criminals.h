@@ -32,7 +32,6 @@ public:
     [[nodiscard]] int getRank() const;
     [[nodiscard]] const std::vector<std::string>& getIntel() const;
 
-    //bool loadCriminal(std::istream& file);
     void promote(int inc = 1);
     [[nodiscard]] virtual double calculateThreatLevel() const;
 
@@ -57,6 +56,13 @@ public:
     [[nodiscard]] virtual std::string specialty() const { return {}; }
 
     std::string interact(DatabaseEntry& other) override;
+
+    std::string interactedBy(const Family& f) override;
+    std::string interactedBy(const Batsuit& b) override;
+
+    Criminal* asCriminal() override { return this; }
+    [[nodiscard]] const Criminal* asCriminal() const override { return this; }
+
     static void simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>>& database, double systemSecurity);
     static void generateStrategicReport(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
     static void runForensics(const std::vector<std::shared_ptr<DatabaseEntry>>& database);

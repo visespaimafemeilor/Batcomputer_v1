@@ -4,6 +4,8 @@
 #include <limits>
 #include <iostream>
 
+#include "criminals/criminals.h"
+
 int Family::familyMemberCount = 0;
 
 Family::Family(const Family& other)
@@ -78,7 +80,7 @@ void Family::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
     bool found = false;
 
     for (const auto& e : db) {
-        if (const auto f = std::dynamic_pointer_cast<Family>(e)) {
+        if (const Family* f = e->asFamily()) {
             f->displayInfo();
             std::cout << "Power Level: " << f->getPhysicalPower() << "\n";
 
@@ -116,11 +118,18 @@ std::string Family::simulateBattle(const Criminal& enemy) const {
 }
 
 std::string Family::interact(DatabaseEntry& other) {
-    if(const auto* cr = dynamic_cast<Criminal*>(&other)){
-        if(fight(*cr)) return name + " confronts " + cr->getName() + " and wins!";
-        return name + " confronts " + cr->getName() + " and loses.";
-    }
+    if(const std::string resp = other.interactedBy(*this); !resp.empty()) return resp;
     return name + " has no special interaction with " + other.type();
+}
+
+std::string Family::interactedBy(const Criminal& c) {
+    if(fight(c)) return name + " confronts " + c.getName() + " and wins!";
+    return name + " confronts " + c.getName() + " and loses.";
+}
+
+std::string Family::interactedBy(const Batsuit& b) {
+    (void)b;
+    return {};
 }
 
 void Family::coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
@@ -129,7 +138,7 @@ void Family::coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>
 
     // Pasul 1: Verificam dacă Oracle este in baza de date
     for (const auto& entry : database) {
-        if (const auto f = std::dynamic_pointer_cast<Family>(entry)) {
+        if (const Family* f = entry->asFamily()) {
             if (f->getName() == "Oracle") {
                 oraclePresent = true;
                 repairPower = 40.0; // Dacă Oracle ajuta, reparatiile sunt mult mai bune
@@ -146,7 +155,7 @@ void Family::coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>
     // Pasul 2: Reparam piesele
     int repairedCount = 0;
     for (auto& entry : database) {
-        if (const auto suitPart = std::dynamic_pointer_cast<Batsuit>(entry)) {
+        if (Batsuit* suitPart = entry->asBatsuit()) {
             suitPart->applyBattleDamage(static_cast<int>(-repairPower));
             std::cout << "[FIXED] " << suitPart->getName()
                       << " restored to " << suitPart->getIntegrity() << "%\n";
@@ -168,12 +177,12 @@ void Family::simulateSiege(const std::vector<std::shared_ptr<DatabaseEntry>>& da
     std::cout << "\n[!!!] GOTHAM UNDER SIEGE: ALL-OUT WAR [!!!]\n";
 
     for (const auto& e : database) {
-        if (const auto f = std::dynamic_pointer_cast<Family>(e)) {
+        if (const Family* f = e->asFamily()) {
             totalDefense += f->getPhysicalPower();
-            std::cout << "[DEFENDER] " << f->getName() << " is on position.\n";
-        } else if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+            std::cout << "[DEFENDER] " << f->getName() << " is on position." << "\n";
+        } else if (const Criminal* c = e->asCriminal()) {
             totalAttack += c->calculateThreatLevel();
-            std::cout << "[ATTACKER] " << c->getName() << " is advancing.\n";
+            std::cout << "[ATTACKER] " << c->getName() << " is advancing." << "\n";
         }
     }
 
@@ -194,10 +203,9 @@ void Family::runTrainingDay(const std::vector<std::shared_ptr<DatabaseEntry>>& d
     }
 
     for (auto& e : database) {
-        if (const auto f = std::dynamic_pointer_cast<Family>(e)) {
+        if (Family* f = e->asFamily()) {
             if (f->getCodename() == memberName) {
                 const int boost = batmanPresent ? 25 : 10;
-                // Presupunem că avem un setter sau acces la power
                 f->physical_power += boost;
                 std::cout << "[TRAINING] " << memberName << " trained "
                           << (batmanPresent ? "with Batman" : "alone")

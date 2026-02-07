@@ -5,6 +5,14 @@
 #include <memory>
 #include <iostream>
 
+class Family;
+class Criminal;
+class Batsuit;
+class CrimeLord;
+class Hacker;
+class BankRobber;
+class MetaHuman;
+
 class DatabaseEntry {
 protected:
     std::string name;
@@ -22,7 +30,6 @@ public:
     }
     [[nodiscard]] virtual double assessThreat() const = 0;
 
-    // polymorphic I/O and summary
     [[nodiscard]] virtual std::string type() const { return "DatabaseEntry"; }
     [[nodiscard]] virtual std::string summary() const { return name; }
     virtual bool load(std::istream& in) { (void)in; return false; }
@@ -34,7 +41,31 @@ public:
         return {"No interaction available"};
     }
 
-    // virtual copy
+    virtual std::string interactedBy(const Family& f) { (void)f; return {}; }
+    virtual std::string interactedBy(const Criminal& c) { (void)c; return {}; }
+    virtual std::string interactedBy(const Batsuit& b) { (void)b; return {}; }
+
+    virtual Family* asFamily() { return nullptr; }
+    [[nodiscard]] virtual const Family* asFamily() const { return nullptr; }
+
+    virtual Criminal* asCriminal() { return nullptr; }
+    [[nodiscard]] virtual const Criminal* asCriminal() const { return nullptr; }
+
+    virtual Batsuit* asBatsuit() { return nullptr; }
+    [[nodiscard]] virtual const Batsuit* asBatsuit() const { return nullptr; }
+
+    virtual CrimeLord* asCrimeLord() { return nullptr; }
+    [[nodiscard]] virtual const CrimeLord* asCrimeLord() const { return nullptr; }
+
+    virtual Hacker* asHacker() { return nullptr; }
+    [[nodiscard]] virtual const Hacker* asHacker() const { return nullptr; }
+
+    virtual BankRobber* asBankRobber() { return nullptr; }
+    [[nodiscard]] virtual const BankRobber* asBankRobber() const { return nullptr; }
+
+    virtual MetaHuman* asMetaHuman() { return nullptr; }
+    [[nodiscard]] virtual const MetaHuman* asMetaHuman() const { return nullptr; }
+
     [[nodiscard]] virtual std::unique_ptr<DatabaseEntry> clone() const = 0;
 
     static std::shared_ptr<DatabaseEntry> createFromStream(std::istream& in);

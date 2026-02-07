@@ -22,17 +22,14 @@ void CombatSimulator::analyzeMatchup(const int idx1, const int idx2) const {
     }
 }
 
-void CombatSimulator::simulateBattle(const std::string& familyMember, const std::string& criminalName) const {
+void CombatSimulator::simulateBattle(const std::string&, const std::string&) const {
     std::shared_ptr<Family> vigilante = nullptr;
     std::shared_ptr<Criminal> enemy = nullptr;
 
     for (auto& e : database) {
-        if (const auto f = std::dynamic_pointer_cast<Family>(e)) {
-            if (f->getCodename() == familyMember) vigilante = f;
-        }
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
-            if (c->getName() == criminalName) enemy = c;
-        }
+        if (!vigilante) vigilante = std::dynamic_pointer_cast<Family>(e);
+        if (!enemy) enemy = std::dynamic_pointer_cast<Criminal>(e);
+        if (vigilante && enemy) break;
     }
 
     if (vigilante && enemy) {
@@ -54,7 +51,7 @@ void CombatSimulator::performInteraction(const int idx1, const int idx2) const {
 
 void CombatSimulator::simulateEscape(const std::string& name, const double securityLevel) const {
     for (const auto& e : database) {
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const Criminal* c = e->asCriminal()) {
             if (c->getName() == name) {
                 const bool escaped = c->simulateEscape(securityLevel);
                 std::cout << (escaped ? "ESCAPED!" : "Contained.") << "\n";
@@ -67,7 +64,7 @@ void CombatSimulator::simulateEscape(const std::string& name, const double secur
 
 void CombatSimulator::showCriminalIntel(const std::string& name) const {
     for (const auto& e : database) {
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const Criminal* c = e->asCriminal()) {
             if (c->getName() == name) {
                 const auto& intel = c->getIntel();
                 std::cout << "\nIntel report for " << c->getName() << ":\n";
@@ -81,4 +78,3 @@ void CombatSimulator::showCriminalIntel(const std::string& name) const {
     }
     std::cout << "Criminal not found.\n";
 }
-

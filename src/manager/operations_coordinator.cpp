@@ -81,13 +81,15 @@ void OperationsCoordinator::runGlobalTacticalSimulation() const {
     for (auto& entry : database) {
         if (const auto hacker = std::dynamic_pointer_cast<Hacker>(entry)) {
             hacker->hackSystem(database);
+            continue;
         }
 
-        else if (const auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
+        if (const auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
             lord->inspireThugs(database);
+            continue;
         }
 
-        else if (const auto meta = std::dynamic_pointer_cast<MetaHuman>(entry)) {
+        if (const auto meta = std::dynamic_pointer_cast<MetaHuman>(entry)) {
             std::cout << "[!] MASSIVE THREAT: " << meta->getName()
                       << " is using " << meta->type() << " powers!\n";
             for (auto& e : database) {

@@ -2,9 +2,10 @@
 #include "exceptions.h"
 #include <fstream>
 #include <iostream>
+#include <utility>
 
-DatabaseManager::DatabaseManager(std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& filename)
-    : database(db), dbFilename(filename) {}
+DatabaseManager::DatabaseManager(std::vector<std::shared_ptr<DatabaseEntry>>& db, std::string  filename)
+    : database(db), dbFilename(std::move(filename)) {}
 
 void DatabaseManager::load() const
 {

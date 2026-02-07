@@ -4,7 +4,6 @@
 #include "database_entry.h"
 #include <string>
 #include <vector>
-#include "criminals/criminals.h"
 
 class Family final : public DatabaseEntry {
 protected:
@@ -19,7 +18,6 @@ public:
         : DatabaseEntry(std::move(codename_)), civilian_name(std::move(civilian_name_)), physical_power(physical_power_), skills(skills_) { ++familyMemberCount; }
     ~Family() override;
 
-    // copy constructor
     Family(const Family& other);
 
     friend void swap(Family& a, Family& b) noexcept;
@@ -44,6 +42,13 @@ public:
     [[nodiscard]] std::string simulateBattle(const Criminal& enemy) const;
 
     std::string interact(DatabaseEntry& other) override;
+
+    std::string interactedBy(const Criminal& c) override;
+    std::string interactedBy(const Batsuit& b) override;
+
+    Family* asFamily() override { return this; }
+    [[nodiscard]] const Family* asFamily() const override { return this; }
+
     static void coordinateRepairs(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
     static void simulateSiege(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
     static void runTrainingDay(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& memberName);

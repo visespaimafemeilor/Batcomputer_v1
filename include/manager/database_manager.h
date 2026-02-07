@@ -8,7 +8,7 @@
 
 class DatabaseManager {
 public:
-    DatabaseManager(std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& filename);
+    DatabaseManager(std::vector<std::shared_ptr<DatabaseEntry>>& db, std::string  filename);
     void load() const;
     void save() const;
 

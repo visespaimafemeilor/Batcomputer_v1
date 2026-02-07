@@ -20,6 +20,9 @@ public:
     [[nodiscard]] double calculateThreatLevel() const override;
     [[nodiscard]] std::string type() const override;
     void save(std::ostream& out) const override;
+
+    Hacker* asHacker() override { return this; }
+    [[nodiscard]] const Hacker* asHacker() const override { return this; }
 };
 
 #endif

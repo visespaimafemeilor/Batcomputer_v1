@@ -9,7 +9,6 @@
 class Batsuit final : public DatabaseEntry{
 protected:
     int level;
-    //std::string part;
     double integrity;
 
     void normalize();
@@ -24,7 +23,6 @@ public:
     [[nodiscard]] double assessThreat() const override;
     [[nodiscard]] std::unique_ptr<DatabaseEntry> clone() const override;
 
-    // DatabaseEntry interface
     [[nodiscard]] std::string type() const override;
     [[nodiscard]] std::string summary() const override;
     bool load(std::istream& in) override;
@@ -47,6 +45,13 @@ public:
     void applyBattleDamage(double damageBad);
 
     std::string interact(DatabaseEntry& other) override;
+
+    std::string interactedBy(const Criminal& c) override;
+    std::string interactedBy(const Family& f) override;
+
+    Batsuit* asBatsuit() override { return this; }
+    [[nodiscard]] const Batsuit* asBatsuit() const override { return this; }
+
     static void redistributeIntegrity(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
     static void calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const std::string& enemyName);
 };

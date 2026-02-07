@@ -4,8 +4,6 @@
 #include "batsuit.h"
 #include "../../include/criminals/hacker.h"
 #include "../../include/criminals/crimeLord.h"
-#include "../../include/criminals/bank_robber.h"
-#include "../../include/criminals/metahuman.h"
 #include <memory>
 #include <utility>
 #include <iostream>
@@ -78,7 +76,7 @@ void Criminal::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
     bool foundAny = false;
 
     for (const auto& e : db) {
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const Criminal* c = e->asCriminal()) {
             c->displayInfo();
             std::cout << "Rank: " << c->getRank()
                       << " | Threat: " << c->calculateThreatLevel() << "\n";
@@ -99,7 +97,7 @@ void Criminal::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
 void Criminal::searchByName(const std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name) {
     bool found = false;
     for (const auto& e : db) {
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const Criminal* c = e->asCriminal()) {
             if (c->getName() == name) {
                 std::cout << "[FOUND] ";
                 c->displayInfo();
@@ -118,9 +116,10 @@ void Criminal::promote(const int inc){
 
 void Criminal::promoteByName(const std::vector<std::shared_ptr<DatabaseEntry>>& db, const std::string& name) {
     for (auto& e : db) {
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const Criminal* c = e->asCriminal()) {
             if (c->getName() == name) {
-                c->promote();
+                // promote() modifies the object; obtain non-const pointer
+                if (auto* modc = e->asCriminal()) modc->promote();
                 std::cout << "[UPDATE] " << name << " has been promoted to Rank " << c->getRank() << ".\n";
                 return;
             }
@@ -190,18 +189,21 @@ bool Criminal::simulateEscape(const double facilitySecurityLevel) const{
 }
 
 std::string Criminal::interact(DatabaseEntry& other) {
-    if(const auto* fam = dynamic_cast<const Family*>(&other)) {
-        if(!intel.empty()){
-            const std::string stolen = intel.back();
-            intel.pop_back();
-            return name + " stole intel '" + stolen + "' from " + fam->getCodename();
-        }
-        return name + " tried to steal from " + fam->getCodename() + " but had no intel to trade.";
-    }
-    if(const auto* bs = dynamic_cast<Batsuit*>(&other)){
-        return name + " inspects suit part '" + bs->getPart() + "' (integrity: " + std::to_string(bs->getIntegrity()) + ")";
-    }
+    if(const std::string resp = other.interactedBy(*this); !resp.empty()) return resp;
     return name + " has no special interaction with " + other.type();
+}
+
+std::string Criminal::interactedBy(const Family& f) {
+    if(!intel.empty()){
+        const std::string stolen = intel.back();
+        intel.pop_back();
+        return name + " stole intel '" + stolen + "' from " + f.getCodename();
+    }
+    return name + " tried to steal from " + f.getCodename() + " but had no intel to trade.";
+}
+
+std::string Criminal::interactedBy(const Batsuit& b) {
+    return name + " inspects suit part '" + b.getPart() + "' (integrity: " + std::to_string(b.getIntegrity()) + ")";
 }
 
 void Criminal::simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>>& database, const double systemSecurity) {
@@ -210,7 +212,7 @@ void Criminal::simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>
     // Pasul 1: Verificam influenta liderilor
     double finalSecurity = systemSecurity;
     for (const auto& entry : database) {
-        if (const auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
+        if (const CrimeLord* lord = entry->asCrimeLord()) {
             finalSecurity -= 15.0; // Un Crime Lord scade securitatea cu 15 unitati
             std::cout << "[!] Crime Lord " << lord->getName() << " is coordinating the riots!\n";
         }
@@ -221,7 +223,7 @@ void Criminal::simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>
     int escapeCount = 0;
 
     while (it != database.end()) {
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(*it)) {
+        if (const Criminal* c = (*it)->asCriminal()) {
             if (c->simulateEscape(finalSecurity)) {
                 std::cout << "[OUTBREAK] " << c->getName() << " (Rank " << c->getRank() << ") has escaped!\n";
                 it = database.erase(it); // il stergem din baza de date (a fugit)
@@ -247,17 +249,17 @@ void Criminal::generateStrategicReport(const std::vector<std::shared_ptr<Databas
 
     for (const auto& entry : database) {
         // 1. Analizăm Amenințarea (Criminali)
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(entry)) {
+        if (const Criminal* c = entry->asCriminal()) {
             totalCriminalThreat += c->calculateThreatLevel();
             if (std::dynamic_pointer_cast<Hacker>(entry)) hackerCount++;
         }
         // 2. Analizăm Defensia (Familie)
-        else if (const auto f = std::dynamic_pointer_cast<Family>(entry)) {
+        else if (const Family* f = entry->asFamily()) {
             totalFamilyDefense += f->getPhysicalPower();
             if (f->getName() == "Oracle") oraclePresent = true;
         }
         // 3. Analizăm Resursele (Batsuit)
-        else if (const auto b = std::dynamic_pointer_cast<Batsuit>(entry)) {
+        else if (const Batsuit* b = entry->asBatsuit()) {
             if (b->getIntegrity() < 50.0) brokenParts++;
         }
     }
@@ -292,7 +294,7 @@ void Criminal::generateStrategicReport(const std::vector<std::shared_ptr<Databas
 void Criminal::runForensics(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
     bool oracleProtects = false;
     for (const auto& e : database) {
-        if (const auto f = std::dynamic_pointer_cast<Family>(e)) {
+        if (const Family* f = e->asFamily()) {
             if (f->getName() == "Oracle") oracleProtects = true;
         }
     }

@@ -36,7 +36,6 @@ int main(const int argc, char** argv) {
                 std::cerr << "Initialization error: " << e.what() << "\n";
             }
 
-            // Perform interactive add (reads from stdin)
             factory.addNewCriminal();
 
             try {
@@ -48,7 +47,6 @@ int main(const int argc, char** argv) {
             }
             return 0;
         }
-        // unknown command -> fallthrough to interactive mode
     }
 
     try {

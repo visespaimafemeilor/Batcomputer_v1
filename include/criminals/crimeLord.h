@@ -18,6 +18,9 @@ public:
 
     [[nodiscard]] double calculateThreatLevel() const override;
     [[nodiscard]] std::string type() const override;
+
+    CrimeLord* asCrimeLord() override { return this; }
+    [[nodiscard]] const CrimeLord* asCrimeLord() const override { return this; }
 };
 
 #endif

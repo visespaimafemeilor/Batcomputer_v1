@@ -10,7 +10,7 @@ std::unique_ptr<DatabaseEntry> Hacker::clone() const {
 }
 
 void Hacker::doDisplay(std::ostream& os) const {
-    Criminal::doDisplay(os); // Reutilizăm afișarea de bază de la Criminal
+    Criminal::doDisplay(os);
     os << " | Specialty: Digital Sabotage (Bypass Level: " << bypassLevel << ")\n";
 }
 void Hacker::hackSystem(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
@@ -19,7 +19,7 @@ void Hacker::hackSystem(const std::vector<std::shared_ptr<DatabaseEntry>>& datab
     
     bool hitAny = false;
     for (auto& entry : database) {
-        if (const auto suitPart = std::dynamic_pointer_cast<Batsuit>(entry)) {
+        if (Batsuit* suitPart = entry->asBatsuit()) {
             const double damage = 2.0 * bypassLevel;
             suitPart->applyBattleDamage(static_cast<int>(damage));
             

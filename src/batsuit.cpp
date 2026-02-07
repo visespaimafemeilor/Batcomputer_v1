@@ -28,7 +28,7 @@ double Batsuit::assessThreat() const {
 }
 
 void Batsuit::doDisplay(std::ostream& os) const {
-    os << "-- SUIT COMPONENT: " << name << " (Integrity: " << integrity << "%) --\n";
+    os << "-- SUIT COMPONENT: " << name << " (Integrity: " << integrity << "% ) --\n";
 }
 
 std::unique_ptr<DatabaseEntry> Batsuit::clone() const {
@@ -53,7 +53,7 @@ void Batsuit::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
     bool found = false;
 
     for (const auto& e : db) {
-        if (const auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
+        if (const Batsuit* b = e->asBatsuit()) {
             std::cout << b->statusReport() << "\n";
             found = true;
         }
@@ -118,12 +118,20 @@ void Batsuit::applyBattleDamage(const double damageBad) {
 }
 
 std::string Batsuit::interact(DatabaseEntry& other) {
-    if(const auto* cr = dynamic_cast<Criminal*>(&other)){
-        // simple effect: if suit integrity low, criminal taunts, else suit intimidates
-        if(integrity < 30.0) return name + " is damaged; " + cr->getName() + " mocks the weak suit.";
-        return name + " intimidates " + cr->getName() + ", reducing threat.";
-    }
+    std::string resp = other.interactedBy(*this);
+    if(!resp.empty()) return resp;
     return name + " has no special interaction with " + other.type();
+}
+
+std::string Batsuit::interactedBy(const Criminal& c) {
+    // simple effect: if suit integrity low, criminal taunts, else suit intimidates
+    if(integrity < 30.0) return name + " is damaged; " + c.getName() + " mocks the weak suit.";
+    return name + " intimidates " + c.getName() + ", reducing threat.";
+}
+
+std::string Batsuit::interactedBy(const Family& f) {
+    (void)f;
+    return {};
 }
 
 void Batsuit::redistributeIntegrity(const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
@@ -131,7 +139,7 @@ void Batsuit::redistributeIntegrity(const std::vector<std::shared_ptr<DatabaseEn
     double totalIntegrity = 0;
 
     for (auto& e : database) {
-        if (auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
+        if (const auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
             parts.push_back(b);
             totalIntegrity += b->getIntegrity();
         }
@@ -162,7 +170,7 @@ void Batsuit::calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEn
 
     // 1. Gasim inamicul
     for (const auto& e : database) {
-        if (const auto c = std::dynamic_pointer_cast<Criminal>(e)) {
+        if (const Criminal* c = e->asCriminal()) {
             if (c->getName() == enemyName) {
                 enemyThreat = c->calculateThreatLevel();
                 break;
@@ -172,7 +180,7 @@ void Batsuit::calculateSurvivalOdds(const std::vector<std::shared_ptr<DatabaseEn
 
     // 2. Calculăm parametrii costumului
     for (const auto& e : database) {
-        if (const auto b = std::dynamic_pointer_cast<Batsuit>(e)) {
+        if (const Batsuit* b = e->asBatsuit()) {
             techSum += b->getLevel();
             // Folosim media armonică pentru a penaliza sever dacă o singură piesă e aproape de 0
             harmonicIntegritySum += 1.0 / (b->getIntegrity() + 1.0);
