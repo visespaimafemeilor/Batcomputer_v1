@@ -1,15 +1,18 @@
 #include <iostream>
 #include <string>
 #include <limits>
-#include "batcomputer.h"
+#include "../include/manager/database_manager.h"
+#include "../include/manager/combat_simulator.h"
+#include "../include/manager/operations_coordinator.h"
+#include "../include/manager/entity_factory.h"
 #include "exceptions.h"
 #include "../inventory.hpp"
 #include "../BatFactory.hpp"
 
-void handleDatabaseMenu(const BatComputer& bc);
-void handleOperationsMenu(BatComputer& bc);
-void handleBatCaveMenu(const BatComputer& bc);
-void handleAdminMenu(BatComputer& bc);
+void handleDatabaseMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const CombatSimulator& simulator);
+void handleOperationsMenu(const CombatSimulator& simulator, const OperationsCoordinator& ops, const std::vector<std::shared_ptr<DatabaseEntry>>& database);
+void handleBatCaveMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const OperationsCoordinator& ops);
+void handleAdminMenu(const EntityFactory& factory, const std::vector<std::shared_ptr<DatabaseEntry>>& database);
 
 
 int main() {
@@ -27,11 +30,18 @@ int main() {
     utilityBelt.displayInventory();
     evidenceLocker.displayInventory();
 
-    BatComputer& bc = BatComputer::getInstance();
+    // Central shared database and managers
+    std::vector<std::shared_ptr<DatabaseEntry>> database;
+    const std::string dbFilename = "database.txt";
+
+    const DatabaseManager dbManager(database, dbFilename);
+    const EntityFactory factory(database);
+    const CombatSimulator simulator(database);
+    const OperationsCoordinator ops(database);
 
     try {
-        std::cout << "Welcome, Dark Knight. Initializing Bat-Computer...\n";
-        bc.loadDatabase();
+        std::cout << "Welcome, Dark Knight. Initializing Bat-Computer managers...\n";
+        dbManager.load();
     } catch (const BatcomputerException& e) {
         std::cerr << "Initialization error: " << e.what() << "\n";
     }
@@ -57,13 +67,13 @@ int main() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (mainChoice) {
-            case 1: handleDatabaseMenu(bc); break;
-            case 2: handleOperationsMenu(bc); break;
-            case 3: handleBatCaveMenu(bc); break;
-            case 4: handleAdminMenu(bc); break;
+            case 1: handleDatabaseMenu(database, simulator); break;
+            case 2: handleOperationsMenu(simulator, ops, database); break;
+            case 3: handleBatCaveMenu(database, ops); break;
+            case 4: handleAdminMenu(factory, database); break;
             case 0:
                 try {
-                    bc.saveDatabase();
+                    dbManager.save();
                 } catch (const std::exception& e) {
                     std::cerr << "Save failed: " << e.what() << "\n";
                 }
@@ -80,7 +90,7 @@ int main() {
 //          IMPLEMENTARE SUB-MENIURI
 // ==========================================
 
-void handleDatabaseMenu(const BatComputer& bc) {
+void handleDatabaseMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const CombatSimulator& simulator) {
     int choice = -1;
     std::string buffer;
     while (choice != 0) {
@@ -96,15 +106,23 @@ void handleDatabaseMenu(const BatComputer& bc) {
         std::cin.ignore(1000, '\n');
 
         switch (choice) {
-            case 1: bc.showAllCriminals(); break;
-            case 2: bc.showBatFamily(); break;
+            case 1: Criminal::showAll(database); break;
+            case 2: Family::showAll(database); break;
             case 3:
                 std::cout << "Enter name: "; std::getline(std::cin, buffer);
-                bc.searchCriminal(buffer); break;
+                Criminal::searchByName(database, buffer);
+                break;
             case 4:
                 std::cout << "Enter name: "; std::getline(std::cin, buffer);
-                bc.showCriminalIntel(buffer); break;
-            case 5: bc.showPolymorphicDatabase(); break;
+                simulator.showCriminalIntel(buffer);
+                break;
+            case 5: {
+                std::cout << "\n=== POLYMORPHIC OVERVIEW ===\n";
+                for (const auto& e : database) {
+                    std::cout << "[" << e->type() << "] " << e->summary() << " | Threat: " << e->assessThreat() << "\n";
+                }
+                break;
+            }
             case 0:
                 std::cout << "Returning to previous menu...\n";
                 break;
@@ -115,7 +133,7 @@ void handleDatabaseMenu(const BatComputer& bc) {
     }
 }
 
-void handleOperationsMenu(BatComputer& bc) {
+void handleOperationsMenu(const CombatSimulator& simulator, const OperationsCoordinator& ops, const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
     int choice = -1;
     while (choice != 0) {
         std::cout << "\n--- [OPERATIONS & TACTICS] ---\n";
@@ -140,56 +158,57 @@ void handleOperationsMenu(BatComputer& bc) {
                 std::string fam, crim;
                 std::cout << "Family Member: "; std::getline(std::cin, fam);
                 std::cout << "Criminal: "; std::getline(std::cin, crim);
-                bc.simulateBattle(fam, crim); break;
+                simulator.simulateBattle(fam, crim); break;
             }
             case 2: {
                 double sec; std::cout << "Security Level (1-100): "; std::cin >> sec;
-                bc.simulateArkhamBlackout(sec); break;
+                ops.simulateArkhamBlackout(sec); break;
             }
-            case 3: bc.generateCrimeReport(); break;
+            case 3: ops.generateCrimeReport(); break;
             case 4: {
                 std::string n; std::cout << "Criminal Name: "; std::getline(std::cin, n);
                 double s; std::cout << "Facility Security (1-10): "; std::cin >> s;
-                bc.simulateEscape(n, s); break;
+                simulator.simulateEscape(n, s); break;
             }
             case 5: {
                 int i1, i2;
-                bc.showPolymorphicDatabase();
+                std::cout << "\n=== POLYMORPHIC OVERVIEW ===\n";
+                for (const auto& e : database) {
+                    std::cout << "[" << e->type() << "] " << e->summary() << " | Threat: " << e->assessThreat() << "\n";
+                }
                 std::cout << "Index 1: "; std::cin >> i1;
                 std::cout << "Index 2: "; std::cin >> i2;
-                bc.performInteraction(i1, i2); break;
+                simulator.performInteraction(i1, i2); break;
             }
             case 6: {
-                bc.runSiege(); break;
+                ops.runSiege(); break;
             }
             case 7: {
-                bc.runForensics(); break;
+                ops.runForensics(); break;
             }
             case 8:
-                bc.runGlobalCyberDefense();
+                ops.runGlobalCyberDefense();
                 break;
             case 9:
-                bc.runUnderworldSting();
+                ops.runUnderworldSting();
                 break;
             case 10:
-                bc.runGlobalTacticalSimulation();
+                ops.runGlobalTacticalSimulation();
                 break;
             case 11: {
                 int i1, i2;
-                bc.showPolymorphicDatabase();
                 std::cout << "\nIntroduceti indecsii celor doua entitati de comparat:\n";
                 std::cout << "Index 1: "; std::cin >> i1;
                 std::cout << "Index 2: "; std::cin >> i2;
 
-                // TEMA 3 & TEMA 2: Apel funcție șablon protejat de try-catch
                 try {
-                    bc.analyzeMatchup(i1, i2);
+                    simulator.analyzeMatchup(i1, i2);
                 } catch (const DatabaseOperationException& e) {
                     std::cerr << "\n[CRITICAL ERROR] " << e.what() << "\n";
                     std::cout << "Sfat: Verificati daca indecsii introdusi exista in lista de mai sus.\n";
                 }
                 break;
-        }
+            }
             case 0:
                 std::cout << "Returning to previous menu...\n";
                 break;
@@ -200,7 +219,7 @@ void handleOperationsMenu(BatComputer& bc) {
     }
 }
 
-void handleBatCaveMenu(const BatComputer& bc) {
+void handleBatCaveMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const OperationsCoordinator& ops) {
     int choice = -1;
     while (choice != 0) {
         std::cout << "\n--- [BAT-CAVE SYSTEMS] ---\n";
@@ -214,14 +233,14 @@ void handleBatCaveMenu(const BatComputer& bc) {
         std::cin.ignore(1000, '\n');
 
         switch (choice) {
-            case 1: bc.showBatsuit(); break;
-            case 2: bc.batcaveMaintenance(); break;
-            case 3: bc.runSuitRebalance(); break;
+            case 1: Batsuit::showAll(database); break;
+            case 2: ops.batcaveMaintenance(); break;
+            case 3: ops.runSuitRebalance(); break;
             case 4: {
                 std::string name;
                 std::cout << "Target enemy for simulation: ";
                 std::getline(std::cin, name);
-                bc.checkSurvival(name);
+                ops.checkSurvival(name);
                 break;
 
             }
@@ -236,7 +255,7 @@ void handleBatCaveMenu(const BatComputer& bc) {
     }
 }
 
-void handleAdminMenu(BatComputer& bc) {
+void handleAdminMenu(const EntityFactory& factory, const std::vector<std::shared_ptr<DatabaseEntry>>& database) {
     int choice = -1;
     while (choice != 0) {
         std::cout << "\n--- [ADMINISTRATIVE ACCESS] ---\n";
@@ -250,18 +269,12 @@ void handleAdminMenu(BatComputer& bc) {
         std::cin.ignore(1000, '\n');
 
         switch (choice) {
-            case 1: bc.addNewCriminal(); break;
-            case 2: bc.addNewFamilyMember(); break;
-            case 3: bc.addNewBatsuitPart(); break;
+            case 1: factory.addNewCriminal(); break;
+            case 2: factory.addNewFamilyMember(); break;
+            case 3: factory.addNewBatsuitPart(); break;
             case 4: {
                     std::string n; std::cout << "Name: "; std::getline(std::cin, n);
-                    bc.promoteCriminal(n); break;
-            }
-            case 5: {
-                    std::string name;
-                    std::cout << "Enter Family Member for training: ";
-                    std::getline(std::cin, name);
-                    bc.runTraining(name);
+                    Criminal::promoteByName(database, n);
                     break;
             }
             case 0:
@@ -272,6 +285,5 @@ void handleAdminMenu(BatComputer& bc) {
                 break;
         }
     }
-
 }
 
