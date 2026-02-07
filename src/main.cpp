@@ -15,7 +15,6 @@ void handleOperationsMenu(const CombatSimulator& simulator, const OperationsCoor
 void handleBatCaveMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const OperationsCoordinator& ops);
 void handleAdminMenu(const EntityFactory& factory, const std::vector<std::shared_ptr<DatabaseEntry>>& database);
 
-
 int main(const int argc, char** argv) {
 
     // Central shared database and managers
