@@ -1,10 +1,10 @@
 #pragma once
-#include "include/exceptions.h"
-#include "include/family.h"
-#include "include/database_entry.h"
-#include "include/criminals/criminals.h"
-#include "include/criminals/hacker.h"
-#include "include/batsuit.h"
+#include "exceptions.h"
+#include "family.h"
+#include "database_entry.h"
+#include "criminals/criminals.h"
+#include "criminals/hacker.h"
+#include "batsuit.h"
 
 class BatFactory {
 public:
@@ -18,3 +18,4 @@ public:
         }
     }
 };
+

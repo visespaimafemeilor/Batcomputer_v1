@@ -1,13 +1,14 @@
 #include <iostream>
 #include <string>
 #include <limits>
-#include "../include/manager/database_manager.h"
-#include "../include/manager/combat_simulator.h"
-#include "../include/manager/operations_coordinator.h"
-#include "../include/manager/entity_factory.h"
+#include "manager/database_manager.h"
+#include "manager/combat_simulator.h"
+#include "manager/operations_coordinator.h"
+#include "manager/entity_factory.h"
 #include "exceptions.h"
-#include "../inventory.hpp"
-#include "../BatFactory.hpp"
+#include "criminals/criminals.h"
+#include "family.h"
+#include "batsuit.h"
 
 void handleDatabaseMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const CombatSimulator& simulator);
 void handleOperationsMenu(const CombatSimulator& simulator, const OperationsCoordinator& ops, const std::vector<std::shared_ptr<DatabaseEntry>>& database);
@@ -15,20 +16,7 @@ void handleBatCaveMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& databa
 void handleAdminMenu(const EntityFactory& factory, const std::vector<std::shared_ptr<DatabaseEntry>>& database);
 
 
-int main() {
-
-    Inventory<std::string> utilityBelt("Utility Belt Gadgets");
-    utilityBelt.addItem("Batarang");
-    utilityBelt.addItem("Smoke Pellet");
-    utilityBelt.addItem("Grapnel Gun");
-
-    Inventory<int> evidenceLocker("Evidence Room - Case IDs");
-    evidenceLocker.addItem(202401);
-    evidenceLocker.addItem(202402);
-
-    // Afișăm inventarele la pornire pentru a demonstra funcționalitatea
-    utilityBelt.displayInventory();
-    evidenceLocker.displayInventory();
+int main(const int argc, char** argv) {
 
     // Central shared database and managers
     std::vector<std::shared_ptr<DatabaseEntry>> database;
@@ -38,6 +26,30 @@ int main() {
     const EntityFactory factory(database);
     const CombatSimulator simulator(database);
     const OperationsCoordinator ops(database);
+
+    // Non-interactive command mode: add a criminal and exit
+    if (argc > 1) {
+        if (const std::string cmd = argv[1]; cmd == "add-criminal") {
+            try {
+                dbManager.load();
+            } catch (const BatcomputerException& e) {
+                std::cerr << "Initialization error: " << e.what() << "\n";
+            }
+
+            // Perform interactive add (reads from stdin)
+            factory.addNewCriminal();
+
+            try {
+                dbManager.save();
+                std::cout << "[OK] Criminal added and database saved.\n";
+            } catch (const std::exception& e) {
+                std::cerr << "Save failed: " << e.what() << "\n";
+                return 2;
+            }
+            return 0;
+        }
+        // unknown command -> fallthrough to interactive mode
+    }
 
     try {
         std::cout << "Welcome, Dark Knight. Initializing Bat-Computer managers...\n";
@@ -55,6 +67,7 @@ int main() {
         std::cout << "2) [OPERATIONS] - Battles & Simulations\n";
         std::cout << "3) [BAT-CAVE]   - Maintenance & Suits\n";
         std::cout << "4) [ADMIN]      - Add New Records\n";
+        std::cout << "5) Quick Add Criminal\n";
         std::cout << "0) [EXIT]       - Save & Shut Down\n";
         std::cout << "------------------------------------\n";
         std::cout << "Selection: ";
@@ -71,6 +84,7 @@ int main() {
             case 2: handleOperationsMenu(simulator, ops, database); break;
             case 3: handleBatCaveMenu(database, ops); break;
             case 4: handleAdminMenu(factory, database); break;
+            case 5: factory.addNewCriminal(); break;
             case 0:
                 try {
                     dbManager.save();
@@ -84,6 +98,7 @@ int main() {
         }
     }
     return 0;
+
 }
 
 // ==========================================
@@ -286,4 +301,3 @@ void handleAdminMenu(const EntityFactory& factory, const std::vector<std::shared
         }
     }
 }
-

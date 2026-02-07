@@ -17,7 +17,6 @@ public:
         items.push_back(item);
     }
 
-    // functie sablon: cauta un item dupa un criteriu
     template <typename Predicate>
     T* findItem(Predicate p) {
         auto it = std::find_if(items.begin(), items.end(), p);
@@ -36,3 +35,4 @@ public:
 };
 
 #endif
+
