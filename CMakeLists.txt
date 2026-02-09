@@ -51,30 +51,17 @@ include(cmake/CopyHelper.cmake)
 add_executable(${MAIN_EXECUTABLE_NAME}
         src/main.cpp
         src/database_entry.cpp
-        include/database_entry.h
         src/criminals/criminals.cpp
-        include/criminals/criminals.h
         src/family.cpp
-        include/family.h
         src/batsuit.cpp
-        include/batsuit.h
-        include/criminals/metahuman.h
         src/criminals/hacker.cpp
-        include/criminals/hacker.h
         src/criminals/crimeLord.cpp
-        include/criminals/crimeLord.h
         src/criminals/bank_robber.cpp
         src/criminals/metahuman.cpp
-        include/manager/combat_simulator.h
         src/manager/combat_simulator.cpp
-        include/manager/database_manager.h
         src/manager/database_manager.cpp
-        include/manager/entity_factory.h
         src/manager/entity_factory.cpp
-        include/manager/operations_coordinator.h
         src/manager/operations_coordinator.cpp
-        include/inventory.hpp
-        include/BatFactory.hpp
 )
 
 # Add include directory so compiler can find headers in include/

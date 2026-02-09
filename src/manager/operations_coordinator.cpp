@@ -1,4 +1,4 @@
-#include "../../include/manager/operations_coordinator.h"
+#include "manager/operations_coordinator.h"
 #include "criminals/hacker.h"
 #include "criminals/crimeLord.h"
 #include "criminals/metahuman.h"

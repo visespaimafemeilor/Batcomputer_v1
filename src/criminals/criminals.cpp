@@ -1,16 +1,13 @@
 //criminals.cpp
-#include "../../include/criminals/criminals.h"
+#include "criminals/criminals.h"
+#include "criminals/hacker.h"
+#include "criminals/crimeLord.h"
+#include <algorithm>
+#include <limits>
+#include <sstream>
+#include <random>
 #include "family.h"
 #include "batsuit.h"
-#include "../../include/criminals/hacker.h"
-#include "../../include/criminals/crimeLord.h"
-#include <memory>
-#include <utility>
-#include <iostream>
-#include <limits>
-#include <random>
-#include <string>
-#include <vector>
 
 int Criminal::criminalCount = 0;
 

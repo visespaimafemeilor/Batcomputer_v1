@@ -1,4 +1,4 @@
-#include "../../include/manager/entity_factory.h"
+#include "manager/entity_factory.h"
 #include "criminals/hacker.h"
 #include "criminals/bank_robber.h"
 #include "criminals/metahuman.h"

@@ -1,9 +1,10 @@
-#include "../../include/manager/combat_simulator.h"
+#include "manager/combat_simulator.h"
+#include <algorithm>
+#include <iostream>
+
 #include "criminals/criminals.h"
 #include "family.h"
 #include "criminals/hacker.h"
-#include <iostream>
-
 #include "exceptions.h"
 
 CombatSimulator::CombatSimulator(std::vector<std::shared_ptr<DatabaseEntry>>& db)

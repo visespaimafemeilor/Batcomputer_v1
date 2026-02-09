@@ -1,4 +1,4 @@
-#include "../../include/manager/database_manager.h"
+#include "manager/database_manager.h"
 #include "exceptions.h"
 #include <fstream>
 #include <iostream>
@@ -38,4 +38,3 @@ void DatabaseManager::save() const {
     }
     std::cout << "[SYSTEM] Progress saved to " << dbFilename << ".\n";
 }
-

@@ -1,11 +1,11 @@
 #include "database_entry.h"
-#include "../include/criminals/criminals.h"
+#include "criminals/criminals.h"
 #include "family.h"
 #include "batsuit.h"
-#include "../include/criminals/hacker.h"
-#include "../include/criminals/bank_robber.h"
-#include "../include/criminals/metahuman.h"
-#include "../include/criminals/crimeLord.h"
+#include "criminals/hacker.h"
+#include "criminals/bank_robber.h"
+#include "criminals/metahuman.h"
+#include "criminals/crimeLord.h"
 #include <limits>
 #include <iostream>
 
