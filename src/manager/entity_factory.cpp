@@ -13,18 +13,46 @@ EntityFactory::EntityFactory(std::vector<std::shared_ptr<DatabaseEntry>>& db)
 void EntityFactory::addNewCriminal() const
 {
     std::string name;
-    int id, rank, typeChoice;
+    int id = 0, rank = 1, typeChoice = 0;
 
     std::cout << "\n--- ADD NEW CRIMINAL ---\n";
     std::cout << "Select Type: 1) Generic 2) Hacker 3) Bank Robber 4) MetaHuman 5)Crime Lord: ";
-    std::cin >> typeChoice;
+    if (!(std::cin >> typeChoice)) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        std::cout << "[ERROR] Invalid type selection. Aborting add operation.\n";
+        return;
+    }
     std::cin.ignore(1000, '\n');
 
-    std::cout << "ID: "; std::cin >> id;
+    std::cout << "ID: ";
+    if (!(std::cin >> id)) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        std::cout << "[ERROR] Invalid ID. Aborting add operation.\n";
+        return;
+    }
     std::cin.ignore(1000, '\n');
-    std::cout << "Codename: "; std::getline(std::cin, name);
-    std::cout << "Rank (1-10): "; std::cin >> rank;
+
+    std::cout << "Codename: ";
+    std::getline(std::cin, name);
+    if (name.empty()) {
+        std::cout << "[ERROR] Empty codename provided. Aborting add operation.\n";
+        return;
+    }
+
+    std::cout << "Rank (1-10): ";
+    if (!(std::cin >> rank)) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        std::cout << "[ERROR] Invalid rank. Aborting add operation.\n";
+        return;
+    }
     std::cin.ignore(1000, '\n');
+
+    // Sanitize rank range
+    if (rank < 1) rank = 1;
+    if (rank > 10) rank = 10;
 
     std::shared_ptr<Criminal> newCrim;
 
@@ -95,4 +123,3 @@ void EntityFactory::addNewBatsuitPart() const
 
     std::cout << "[SUCCESS] " << partName << " has been equipped to the Batsuit loadout.\n";
 }
-

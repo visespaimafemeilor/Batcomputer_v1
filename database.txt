@@ -1,4 +1,4 @@
-12
+13
 100
 Nightwing
 Dick Grayson
@@ -78,3 +78,8 @@ Damien Wayne
 Martial arts.
 Sword fighting.
 Individualistic and stubborn.
+0
+0
+
+10
+0
