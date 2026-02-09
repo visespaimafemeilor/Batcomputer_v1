@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # default values
 # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose

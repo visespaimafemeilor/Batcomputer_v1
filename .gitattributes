@@ -1,1 +1,13 @@
-ext/** linguist-vendored
+# Enforce LF for shell scripts, GitHub Actions, CMake, and source files
+*.sh text eol=lf
+.github/** text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.cmake text eol=lf
+*.c text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+*.txt text eol=lf
+README.md text eol=lf
+

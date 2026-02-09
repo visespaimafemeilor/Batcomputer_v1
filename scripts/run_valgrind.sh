@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 INPUT_FILENAME=${INPUT_FILENAME:-tastatura.txt}
 RUN_INTERACTIVE=${RUN_INTERACTIVE:-false}

@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 DEFAULT_BUILD_DIR="build"
 DEFAULT_BUILD_TYPE="Debug"
@@ -131,4 +131,3 @@ case "$1" in
         install\n" "${opt}"
       exit 1
 esac
-
