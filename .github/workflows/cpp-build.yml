@@ -23,6 +23,7 @@ jobs:
           g++ -std=c++20 -Wall -Wextra -O2 \
           src/*.cpp \
           src/criminals/*.cpp \
+          src/manager/*.cpp \
           -I include \
           -I include/criminals \
           -o batcomputer
