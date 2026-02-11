@@ -43,3 +43,26 @@ void Hacker::save(std::ostream& out) const {
     Criminal::save(out);
     out << bypassLevel << "\n";
 }
+
+int Hacker::hackerCountContribution() const {
+    return 1;
+}
+
+void Hacker::onCyberSweep(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
+    hackSystem(database);
+}
+
+void Hacker::onGlobalTacticalSimulation(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
+    hackSystem(database);
+}
+
+void Hacker::runForensicsAction(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
+    std::cout << "[RISK] Hacker " << name << " is attempting to breach suit files...\n";
+    for (const auto& p : database) {
+        if (const auto suit = std::dynamic_pointer_cast<Batsuit>(p)) {
+            if (suit->getIntegrity() < 40.0) {
+                std::cout << "  > WARNING: Data leaked from damaged part: " << suit->getName() << "\n";
+            }
+        }
+    }
+}

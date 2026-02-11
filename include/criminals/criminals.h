@@ -63,6 +63,15 @@ public:
     Criminal* asCriminal() override { return this; }
     [[nodiscard]] const Criminal* asCriminal() const override { return this; }
 
+    [[nodiscard]] virtual int hackerCountContribution() const { return 0; }
+    [[nodiscard]] virtual int leaderInfluenceContribution() const { return 0; }
+
+    virtual void affectBlackoutSecurity(double& systemSecurity) const { (void)systemSecurity; }
+    virtual void onCyberSweep(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const { (void)database; }
+    virtual void onUnderworldSting(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const { (void)database; }
+    virtual void onGlobalTacticalSimulation(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const { (void)database; }
+    virtual void runForensicsAction(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const { (void)database; }
+
     static void simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>>& database, double systemSecurity);
     static void generateStrategicReport(const std::vector<std::shared_ptr<DatabaseEntry>>& database);
     static void runForensics(const std::vector<std::shared_ptr<DatabaseEntry>>& database);

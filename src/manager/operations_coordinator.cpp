@@ -1,7 +1,5 @@
 #include "manager/operations_coordinator.h"
 #include "criminals/hacker.h"
-#include "criminals/crimeLord.h"
-#include "criminals/metahuman.h"
 #include "family.h"
 #include "batsuit.h"
 #include "criminals/criminals.h"
@@ -47,10 +45,10 @@ void OperationsCoordinator::runGlobalCyberDefense() const {
     std::cout << "\n[SYSTEM] SCANNING FOR ACTIVE CYBER THREATS...\n";
     bool threatFound = false;
 
-    for (auto& entry : database) {
-        if (const auto hacker = std::dynamic_pointer_cast<Hacker>(entry)) {
-            hacker->hackSystem(this->database);
-            threatFound = true;
+    for (const auto& entry : database) {
+        if (const Criminal* c = entry->asCriminal()) {
+            c->onCyberSweep(this->database);
+            if (c->hackerCountContribution() > 0) threatFound = true;
         }
     }
 
@@ -63,10 +61,10 @@ void OperationsCoordinator::runUnderworldSting() const {
     std::cout << "\n[SYSTEM] MONITORING CRIME LORD INFLUENCE...\n";
     bool bossFound = false;
 
-    for (auto& entry : database) {
-        if (const auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
-            lord->inspireThugs(this->database);
-            bossFound = true;
+    for (const auto& entry : database) {
+        if (const Criminal* c = entry->asCriminal()) {
+            c->onUnderworldSting(this->database);
+            if (c->leaderInfluenceContribution() > 0) bossFound = true;
         }
     }
 
@@ -78,25 +76,9 @@ void OperationsCoordinator::runUnderworldSting() const {
 void OperationsCoordinator::runGlobalTacticalSimulation() const {
     std::cout << "\n=== [BAT-COMPUTER] STARTING GLOBAL TACTICAL SIMULATION ===\n";
 
-    for (auto& entry : database) {
-        if (const auto hacker = std::dynamic_pointer_cast<Hacker>(entry)) {
-            hacker->hackSystem(database);
-            continue;
-        }
-
-        if (const auto lord = std::dynamic_pointer_cast<CrimeLord>(entry)) {
-            lord->inspireThugs(database);
-            continue;
-        }
-
-        if (const auto meta = std::dynamic_pointer_cast<MetaHuman>(entry)) {
-            std::cout << "[!] MASSIVE THREAT: " << meta->getName()
-                      << " is using " << meta->type() << " powers!\n";
-            for (auto& e : database) {
-                if (const auto suit = std::dynamic_pointer_cast<Batsuit>(e)) {
-                    suit->applyBattleDamage(10.0);
-                }
-            }
+    for (const auto& entry : database) {
+        if (const Criminal* c = entry->asCriminal()) {
+            c->onGlobalTacticalSimulation(database);
         }
     }
     std::cout << "=== SIMULATION CONCLUDED ===\n";

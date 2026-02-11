@@ -2,6 +2,8 @@
 #define METAHUMAN_H
 
 #include "criminals.h"
+#include <vector>
+#include <memory>
 
 class MetaHuman final : public Criminal {
 protected:
@@ -25,6 +27,8 @@ public:
 
     MetaHuman* asMetaHuman() override { return this; }
     [[nodiscard]] const MetaHuman* asMetaHuman() const override { return this; }
+
+    void onGlobalTacticalSimulation(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const override;
 };
 
 #endif

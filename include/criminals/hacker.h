@@ -4,6 +4,7 @@
 #include "criminals.h"
 #include <vector>
 #include <memory>
+#include "../batsuit.h"
 
 class Hacker final : public Criminal {
 protected:
@@ -23,6 +24,12 @@ public:
 
     Hacker* asHacker() override { return this; }
     [[nodiscard]] const Hacker* asHacker() const override { return this; }
+
+    [[nodiscard]] int hackerCountContribution() const override;
+    void onCyberSweep(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const override;
+    void onGlobalTacticalSimulation(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const override;
+    void runForensicsAction(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const override;
 };
 
 #endif
+

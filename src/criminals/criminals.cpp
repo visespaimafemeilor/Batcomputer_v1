@@ -1,7 +1,6 @@
 //criminals.cpp
 #include "criminals/criminals.h"
 #include "criminals/hacker.h"
-#include "criminals/crimeLord.h"
 #include <algorithm>
 #include <limits>
 #include <sstream>
@@ -209,9 +208,8 @@ void Criminal::simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>
     // Pasul 1: Verificam influenta liderilor
     double finalSecurity = systemSecurity;
     for (const auto& entry : database) {
-        if (const CrimeLord* lord = entry->asCrimeLord()) {
-            finalSecurity -= 15.0; // Un Crime Lord scade securitatea cu 15 unitati
-            std::cout << "[!] Crime Lord " << lord->getName() << " is coordinating the riots!\n";
+        if (const Criminal* c = entry->asCriminal()) {
+            c->affectBlackoutSecurity(finalSecurity);
         }
     }
 
@@ -248,7 +246,7 @@ void Criminal::generateStrategicReport(const std::vector<std::shared_ptr<Databas
         // 1. Analizăm Amenințarea (Criminali)
         if (const Criminal* c = entry->asCriminal()) {
             totalCriminalThreat += c->calculateThreatLevel();
-            if (std::dynamic_pointer_cast<Hacker>(entry)) hackerCount++;
+            hackerCount += c->hackerCountContribution();
         }
         // 2. Analizăm Defensia (Familie)
         else if (const Family* f = entry->asFamily()) {
@@ -303,15 +301,8 @@ void Criminal::runForensics(const std::vector<std::shared_ptr<DatabaseEntry>>& d
     }
 
     for (const auto& e : database) {
-        if (const auto h = std::dynamic_pointer_cast<Hacker>(e)) {
-            std::cout << "[RISK] Hacker " << h->getName() << " is attempting to breach suit files...\n";
-            for (const auto& p : database) {
-                if (const auto suit = std::dynamic_pointer_cast<Batsuit>(p)) {
-                    if (suit->getIntegrity() < 40.0) {
-                        std::cout << "  > WARNING: Data leaked from damaged part: " << suit->getName() << "\n";
-                    }
-                }
-            }
+        if (const Criminal* c = e->asCriminal()) {
+            c->runForensicsAction(database);
         }
     }
 }

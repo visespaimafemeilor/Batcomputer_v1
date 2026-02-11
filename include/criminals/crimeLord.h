@@ -21,6 +21,10 @@ public:
 
     CrimeLord* asCrimeLord() override { return this; }
     [[nodiscard]] const CrimeLord* asCrimeLord() const override { return this; }
+
+    [[nodiscard]] int leaderInfluenceContribution() const override;
+    void onUnderworldSting(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const override;
+    void affectBlackoutSecurity(double& systemSecurity) const override;
 };
 
 #endif

@@ -1,4 +1,6 @@
 #include "criminals/metahuman.h"
+#include "batsuit.h"
+#include <memory>
 
 MetaHuman::MetaHuman(const int id_, const std::string& name_, const int rank_, std::string source, const double scale)
     : Criminal(id_, name_, rank_, {}, CriminalType::METAHUMAN), 
@@ -32,4 +34,13 @@ bool MetaHuman::load(std::istream& in) {
     if (!Criminal::load(in)) return false;
     in >> powerSource >> powerScale;
     return true;
+}
+
+void MetaHuman::onGlobalTacticalSimulation(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
+    std::cout << "[!] MASSIVE THREAT: " << name << " is using " << type() << " powers!\n";
+    for (auto& e : database) {
+        if (const auto suit = std::dynamic_pointer_cast<Batsuit>(e)) {
+            suit->applyBattleDamage(10.0);
+        }
+    }
 }

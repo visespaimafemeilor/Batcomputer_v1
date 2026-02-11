@@ -39,3 +39,16 @@ double CrimeLord::calculateThreatLevel() const {
 std::string CrimeLord::type() const {
     return {"Crime Lord"};
 }
+
+int CrimeLord::leaderInfluenceContribution() const {
+    return 1;
+}
+
+void CrimeLord::onUnderworldSting(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const {
+    inspireThugs(database);
+}
+
+void CrimeLord::affectBlackoutSecurity(double& systemSecurity) const {
+    systemSecurity -= 15.0;
+    std::cout << "[!] Crime Lord " << name << " is coordinating the riots!\n";
+}
