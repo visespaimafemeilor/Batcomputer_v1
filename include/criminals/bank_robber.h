@@ -22,9 +22,6 @@ public:
 
     void save(std::ostream& out) const override;
     bool load(std::istream& in) override;
-
-    BankRobber* asBankRobber() override { return this; }
-    [[nodiscard]] const BankRobber* asBankRobber() const override { return this; }
 };
 
 #endif

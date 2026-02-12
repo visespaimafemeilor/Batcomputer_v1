@@ -22,9 +22,6 @@ public:
     [[nodiscard]] std::string type() const override;
     void save(std::ostream& out) const override;
 
-    Hacker* asHacker() override { return this; }
-    [[nodiscard]] const Hacker* asHacker() const override { return this; }
-
     [[nodiscard]] int hackerCountContribution() const override;
     void onCyberSweep(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const override;
     void onGlobalTacticalSimulation(const std::vector<std::shared_ptr<DatabaseEntry>>& database) const override;

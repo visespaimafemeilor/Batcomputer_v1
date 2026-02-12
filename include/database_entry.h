@@ -8,10 +8,6 @@
 class Family;
 class Criminal;
 class Batsuit;
-class CrimeLord;
-class Hacker;
-class BankRobber;
-class MetaHuman;
 
 class DatabaseEntry {
 protected:
@@ -53,18 +49,6 @@ public:
 
     virtual Batsuit* asBatsuit() { return nullptr; }
     [[nodiscard]] virtual const Batsuit* asBatsuit() const { return nullptr; }
-
-    virtual CrimeLord* asCrimeLord() { return nullptr; }
-    [[nodiscard]] virtual const CrimeLord* asCrimeLord() const { return nullptr; }
-
-    virtual Hacker* asHacker() { return nullptr; }
-    [[nodiscard]] virtual const Hacker* asHacker() const { return nullptr; }
-
-    virtual BankRobber* asBankRobber() { return nullptr; }
-    [[nodiscard]] virtual const BankRobber* asBankRobber() const { return nullptr; }
-
-    virtual MetaHuman* asMetaHuman() { return nullptr; }
-    [[nodiscard]] virtual const MetaHuman* asMetaHuman() const { return nullptr; }
 
     [[nodiscard]] virtual std::unique_ptr<DatabaseEntry> clone() const = 0;
 
