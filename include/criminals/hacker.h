@@ -4,9 +4,10 @@
 #include "criminals.h"
 #include <vector>
 #include <memory>
-#include "../batsuit.h"
+#include "icriminal_cyber.h"
+#include "icriminal_tactical.h"
 
-class Hacker final : public Criminal {
+class Hacker final : public Criminal, public ICyberThreat, public ITacticalSimulator {
 protected:
     int bypassLevel;
     void doDisplay(std::ostream& os) const override; //
@@ -29,4 +30,3 @@ public:
 };
 
 #endif
-

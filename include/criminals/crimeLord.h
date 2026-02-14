@@ -4,8 +4,9 @@
 #include "criminals.h"
 #include <vector>
 #include <memory>
+#include "icriminal_leader.h"
 
-class CrimeLord final : public Criminal {
+class CrimeLord final : public Criminal, public ILeaderInfluence {
 protected:
     void doDisplay(std::ostream& os) const override;
 

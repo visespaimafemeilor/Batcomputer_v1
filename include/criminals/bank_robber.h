@@ -2,8 +2,9 @@
 #define BANK_ROBBER_H
 
 #include "criminals.h"
+#include "icriminal_specialist.h"
 
-class BankRobber final : public Criminal {
+class BankRobber final : public Criminal, public ISpecialist {
 protected:
     int successfulHeists;
     bool hasGetawayVehicle;

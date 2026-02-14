@@ -1,12 +1,14 @@
 //criminals.cpp
 #include "criminals/criminals.h"
-#include "criminals/hacker.h"
+#include "family.h"
+#include "batsuit.h"
+#include "criminals/icriminal_cyber.h"
+#include "criminals/icriminal_leader.h"
+#include "criminals/icriminal_specialist.h"
 #include <algorithm>
 #include <limits>
 #include <sstream>
 #include <random>
-#include "family.h"
-#include "batsuit.h"
 
 int Criminal::criminalCount = 0;
 
@@ -77,8 +79,11 @@ void Criminal::showAll(const std::vector<std::shared_ptr<DatabaseEntry>>& db) {
             std::cout << "Rank: " << c->getRank()
                       << " | Threat: " << c->calculateThreatLevel() << "\n";
 
-            if (!c->specialty().empty()) {
-                std::cout << "Specialty: " << c->specialty() << "\n";
+            // Use ISpecialist interface to print specialties
+            if (const auto sp = dynamic_cast<const ISpecialist*>(c)) {
+                if (!sp->specialty().empty()) {
+                    std::cout << "Specialty: " << sp->specialty() << "\n";
+                }
             }
             std::cout << "--------------------------\n";
             foundAny = true;
@@ -209,7 +214,9 @@ void Criminal::simulateArkhamBlackout(std::vector<std::shared_ptr<DatabaseEntry>
     double finalSecurity = systemSecurity;
     for (const auto& entry : database) {
         if (const Criminal* c = entry->asCriminal()) {
-            c->affectBlackoutSecurity(finalSecurity);
+            if (auto* il = dynamic_cast<const ILeaderInfluence*>(c)) {
+                il->affectBlackoutSecurity(finalSecurity);
+            }
         }
     }
 
@@ -246,7 +253,9 @@ void Criminal::generateStrategicReport(const std::vector<std::shared_ptr<Databas
         // 1. Analizăm Amenințarea (Criminali)
         if (const Criminal* c = entry->asCriminal()) {
             totalCriminalThreat += c->calculateThreatLevel();
-            hackerCount += c->hackerCountContribution();
+            if (auto* ic = dynamic_cast<const ICyberThreat*>(c)) {
+                hackerCount += ic->hackerCountContribution();
+            }
         }
         // 2. Analizăm Defensia (Familie)
         else if (const Family* f = entry->asFamily()) {
@@ -302,7 +311,9 @@ void Criminal::runForensics(const std::vector<std::shared_ptr<DatabaseEntry>>& d
 
     for (const auto& e : database) {
         if (const Criminal* c = e->asCriminal()) {
-            c->runForensicsAction(database);
+            if (auto* ic = dynamic_cast<const ICyberThreat*>(c)) {
+                ic->runForensicsAction(database);
+            }
         }
     }
 }

@@ -1,7 +1,10 @@
 #include "manager/operations_coordinator.h"
-#include "criminals/hacker.h"
 #include "family.h"
 #include "batsuit.h"
+#include "criminals/hacker.h"
+#include "criminals/icriminal_cyber.h"
+#include "criminals/icriminal_leader.h"
+#include "criminals/icriminal_tactical.h"
 #include "criminals/criminals.h"
 #include <iostream>
 
@@ -47,8 +50,10 @@ void OperationsCoordinator::runGlobalCyberDefense() const {
 
     for (const auto& entry : database) {
         if (const Criminal* c = entry->asCriminal()) {
-            c->onCyberSweep(this->database);
-            if (c->hackerCountContribution() > 0) threatFound = true;
+            if (auto* ic = dynamic_cast<const ICyberThreat*>(c)) {
+                ic->onCyberSweep(this->database);
+                if (ic->hackerCountContribution() > 0) threatFound = true;
+            }
         }
     }
 
@@ -63,8 +68,10 @@ void OperationsCoordinator::runUnderworldSting() const {
 
     for (const auto& entry : database) {
         if (const Criminal* c = entry->asCriminal()) {
-            c->onUnderworldSting(this->database);
-            if (c->leaderInfluenceContribution() > 0) bossFound = true;
+            if (auto* il = dynamic_cast<const ILeaderInfluence*>(c)) {
+                il->onUnderworldSting(this->database);
+                if (il->leaderInfluenceContribution() > 0) bossFound = true;
+            }
         }
     }
 
@@ -78,7 +85,9 @@ void OperationsCoordinator::runGlobalTacticalSimulation() const {
 
     for (const auto& entry : database) {
         if (const Criminal* c = entry->asCriminal()) {
-            c->onGlobalTacticalSimulation(database);
+            if (auto* it = dynamic_cast<const ITacticalSimulator*>(c)) {
+                it->onGlobalTacticalSimulation(database);
+            }
         }
     }
     std::cout << "=== SIMULATION CONCLUDED ===\n";

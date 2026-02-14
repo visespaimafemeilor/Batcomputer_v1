@@ -4,8 +4,10 @@
 #include "criminals.h"
 #include <vector>
 #include <memory>
+#include "icriminal_tactical.h"
+#include "icriminal_specialist.h"
 
-class MetaHuman final : public Criminal {
+class MetaHuman final : public Criminal, public ITacticalSimulator, public ISpecialist {
 protected:
     std::string powerSource;
     double powerScale;
