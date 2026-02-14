@@ -62,6 +62,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         src/manager/database_manager.cpp
         src/manager/entity_factory.cpp
         src/manager/operations_coordinator.cpp
+        src/entry_factory.cpp
+        src/registrations.cpp
 )
 
 # Add include directory so compiler can find headers in include/
