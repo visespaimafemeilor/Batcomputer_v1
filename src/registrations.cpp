@@ -9,6 +9,10 @@
 #include "family.h"
 
 void registerAllEntities() {
+    static bool already_registered = false;
+    if (already_registered) return;
+    already_registered = true;
+
     // Register criminal types
     EntryFactory::registerFactory(static_cast<int>(CriminalType::HACKER), [] { return std::make_shared<Hacker>(); });
     EntryFactory::registerFactory(static_cast<int>(CriminalType::BANK_ROBBER), [] { return std::make_shared<BankRobber>(); });
@@ -20,4 +24,3 @@ void registerAllEntities() {
     EntryFactory::registerFactory(100, [] { return std::make_shared<Family>(); });
     EntryFactory::registerFactory(200, [] { return std::make_shared<Batsuit>(); });
 }
-
