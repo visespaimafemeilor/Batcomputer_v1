@@ -1,5 +1,6 @@
 #include "criminals/metahuman.h"
 #include "batsuit.h"
+#include "entry_factory.h"
 #include <memory>
 
 MetaHuman::MetaHuman(const int id_, const std::string& name_, const int rank_, std::string source, const double scale)

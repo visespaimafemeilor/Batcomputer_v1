@@ -1,5 +1,6 @@
 //criminals.cpp
 #include "criminals/criminals.h"
+#include "entry_factory.h"
 #include "family.h"
 #include "batsuit.h"
 #include "criminals/icriminal_cyber.h"

@@ -1,4 +1,5 @@
 #include "criminals/bank_robber.h"
+#include "entry_factory.h"
 
 BankRobber::BankRobber(const int id_, const std::string& name_, const int rank_, const int heists, const bool vehicle)
     : Criminal(id_, name_, rank_, {}, CriminalType::BANK_ROBBER),

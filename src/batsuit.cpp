@@ -1,5 +1,6 @@
 #include "batsuit.h"
 #include "criminals/criminals.h"
+#include "entry_factory.h"
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
@@ -118,8 +119,7 @@ void Batsuit::applyBattleDamage(const double damageBad) {
 }
 
 std::string Batsuit::interact(DatabaseEntry& other) {
-    std::string resp = other.interactedBy(*this);
-    if(!resp.empty()) return resp;
+    if(std::string resp = other.interactedBy(*this); !resp.empty()) return resp;
     return name + " has no special interaction with " + other.type();
 }
 

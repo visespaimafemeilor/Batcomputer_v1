@@ -1,5 +1,6 @@
 #include "family.h"
 #include "batsuit.h"
+#include "entry_factory.h"
 #include <algorithm>
 #include <limits>
 #include <iostream>

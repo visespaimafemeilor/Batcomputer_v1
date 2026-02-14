@@ -9,6 +9,7 @@
 #include "criminals/criminals.h"
 #include "family.h"
 #include "batsuit.h"
+#include "registrations.h"
 
 void handleDatabaseMenu(const std::vector<std::shared_ptr<DatabaseEntry>>& database, const CombatSimulator& simulator);
 void handleOperationsMenu(const CombatSimulator& simulator, const OperationsCoordinator& ops, const std::vector<std::shared_ptr<DatabaseEntry>>& database);
@@ -20,6 +21,8 @@ int main(const int argc, char** argv) {
     // Central shared database and managers
     std::vector<std::shared_ptr<DatabaseEntry>> database;
     const std::string dbFilename = "database.txt";
+
+    registerAllEntities();
 
     const DatabaseManager dbManager(database, dbFilename);
     const EntityFactory factory(database);

@@ -6,6 +6,7 @@
 #include "criminals/bank_robber.h"
 #include "criminals/metahuman.h"
 #include "criminals/crimeLord.h"
+#include "entry_factory.h"
 #include <limits>
 #include <iostream>
 
@@ -21,6 +22,11 @@ std::shared_ptr<DatabaseEntry> DatabaseEntry::createFromStream(std::istream& in)
 
     in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+    if (auto entry = EntryFactory::create(typeId)) {
+        if (entry->load(in)) return entry;
+        return nullptr;
+    }
+
     std::shared_ptr<DatabaseEntry> entry = nullptr;
 
     // Logica de selectie:
@@ -35,12 +41,12 @@ std::shared_ptr<DatabaseEntry> DatabaseEntry::createFromStream(std::istream& in)
         entry = std::make_shared<Batsuit>();
     }
     else {
+        // if not 100 or 200, assume it's a criminal code
+        switch (static_cast<CriminalType>(typeId)) {
         // daca nu este 100 sau 200, presupunem ca este un cod de Criminal
 
-        switch (static_cast<CriminalType>(typeId)) {
-            case CriminalType::HACKER:
-                entry = std::make_shared<Hacker>();
-                break;
+//                entry = std::make_shared<Hacker>();
+//                break;
             case CriminalType::BANK_ROBBER:
                 entry = std::make_shared<BankRobber>();
                 break;
